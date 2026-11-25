@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" font-family="IBM Plex Sans Arabic, Segoe UI, sans-serif">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset=".5" stop-color="#db2777"/><stop offset="1" stop-color="#f97316"/></linearGradient>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#db2777"/></marker>
+  </defs>
+  <rect width="1200" height="520" rx="24" fill="#0b0b12"/>
+  <text x="600" y="58" text-anchor="middle" font-size="30" font-weight="700" fill="url(#g)">وكيل جبائي ذكي · Agent fiscal intelligent · Smart Tax Agent</text>
+  <rect x="40" y="96" width="1120" height="300" rx="18" fill="none" stroke="url(#g)" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="600" y="128" text-anchor="middle" font-size="17" fill="#f5d0fe">داخل متصفّحك · Dans votre navigateur · Inside your browser</text>
+  <g font-size="16" fill="#fff" text-anchor="middle">
+    <rect x="70" y="160" width="190" height="120" rx="14" fill="#1a1030" stroke="#7c3aed"/>
+    <text x="165" y="205" font-weight="700">1 · قراءة</text><text x="165" y="232">Lecture · Reading</text><text x="165" y="258" font-size="13" fill="#c4b5fd">PDF · Excel · Word</text>
+    <rect x="320" y="160" width="190" height="120" rx="14" fill="#1a1030" stroke="#a21caf"/>
+    <text x="415" y="205" font-weight="700">2 · إخفاء الهوية</text><text x="415" y="232">Anonymisation</text><text x="415" y="258" font-size="13" fill="#f0abfc">[NOM] [MF] [RIB]…</text>
+    <rect x="570" y="160" width="190" height="120" rx="14" fill="#1a1030" stroke="#db2777"/>
+    <text x="665" y="205" font-weight="700">3 · قواعد جبائية</text><text x="665" y="232">Moteur de règles</text><text x="665" y="258" font-size="13" fill="#fbcfe8">TVA · RS · ElFatoora…</text>
+    <rect x="820" y="160" width="190" height="120" rx="14" fill="#1a1030" stroke="#f97316"/>
+    <text x="915" y="205" font-weight="700">4 · التقرير</text><text x="915" y="232">Rapport · Report</text><text x="915" y="258" font-size="13" fill="#fed7aa">score /100</text>
+  </g>
+  <g stroke="#db2777" stroke-width="3" marker-end="url(#a)"><line x1="262" y1="220" x2="316" y2="220"/><line x1="512" y1="220" x2="566" y2="220"/><line x1="762" y1="220" x2="816" y2="220"/></g>
+  <text x="600" y="340" text-anchor="middle" font-size="17" fill="#fff">connect-src 'none' — الصفحة لا تستطيع إرسال أيّ معطيات · la page ne peut rien envoyer · the page cannot send anything</text>
+  <g font-size="17" text-anchor="middle">
+    <rect x="200" y="420" width="360" height="64" rx="32" fill="#14532d" opacity=".55"/><text x="380" y="459" fill="#bbf7d0">✓ 0 خادم · 0 serveur · 0 server</text>
+    <rect x="640" y="420" width="360" height="64" rx="32" fill="#14532d" opacity=".55"/><text x="820" y="459" fill="#bbf7d0">✓ 0 مفتاح · 0 clé · 0 API key · 0 DT</text>
+  </g>
+</svg>

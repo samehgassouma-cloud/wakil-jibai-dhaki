@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>وكيل جبائي ذكي — TadreebPro.ai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+<style>
+:root{--or:#D62F9C;--orl:#FF7AB8;--g1:#6A3CF6;--g2:#D62F9C;--g3:#F4793A;--grad:linear-gradient(90deg,#6A3CF6 0%,#C42FA6 50%,#F4793A 100%);--bg:#000;--pn:#080808;--ln:#2f2f2f;--tx:#ececec;--mu:#8c8c8c;--hi:#ff6b4a;--md:#f0b43c;--lo:#7fb0ff}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Arabic',system-ui,sans-serif}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+a{color:var(--orl)}
+button{font-family:inherit;cursor:pointer}
+/* top bar */
+.top{position:sticky;top:0;z-index:20;background:rgba(0,0,0,.92);border-bottom:1px solid var(--ln);display:flex;align-items:center;gap:14px;padding:10px 18px;flex-wrap:wrap}
+.top .brand{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;direction:ltr}
+.top .brand b{color:var(--or)}
+.steps{display:flex;gap:6px;margin-inline-start:auto}
+.steps span{font-size:13px;padding:4px 10px;border:1px solid var(--ln);border-radius:20px;color:var(--mu)}
+.steps span.on{background:var(--or);color:#000;border-color:var(--or);font-weight:700}
+.wrap{max-width:1280px;margin:0 auto;padding:18px}
+/* cards */
+.card{background:var(--pn);border:1px solid var(--ln);margin-bottom:16px}
+.card>.hd{background:var(--or);color:#000;font-weight:700;padding:8px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.card>.hd small{font-weight:400;font-size:12px;unicode-bidi:plaintext;opacity:.75}
+.card>.bd{padding:16px}
+.hero{padding:28px 18px 8px;text-align:center}
+.hero h1{margin:0;font-size:34px}
+.hero h1 em{font-style:normal;color:var(--or)}
+.hero p{color:#bbb;margin:8px auto 0;max-width:760px;line-height:1.8}
+.hero .tri{color:var(--mu);font-size:14px;margin-top:8px;unicode-bidi:plaintext}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 18px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 18px}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:14px;color:#cfcfcf}
+label.f .fr{font-size:12px;color:var(--mu);unicode-bidi:plaintext;text-align:start}
+input,select,textarea{background:#111;border:1px solid #3a3a3a;color:var(--tx);padding:9px 10px;font-family:inherit;font-size:15px;border-radius:4px;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--or);border-color:var(--or)}
+input.num{direction:ltr;text-align:left;font-family:'JetBrains Mono',monospace}
+textarea{min-height:90px;resize:vertical}
+.sec{font-weight:700;margin:18px 0 10px;color:var(--orl);font-size:15px;border-bottom:1px dashed #333;padding-bottom:6px}
+.sec:first-child{margin-top:0}
+.hint{font-size:13px;color:var(--mu);line-height:1.7}
+.drop{border:2px dashed #555;padding:26px;text-align:center;border-radius:6px;transition:.2s}
+.drop.over{border-color:var(--or);background:#1c0c24}
+.drop b{color:var(--orl)}
+.flist{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.fitem{display:grid;grid-template-columns:1fr 210px 34px;gap:10px;align-items:center;background:#0f0f0f;border:1px solid #2a2a2a;padding:8px 10px}
+.fitem .nm{font-family:'JetBrains Mono',monospace;font-size:13px;direction:ltr;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fitem .nm small{color:var(--mu)}
+.fitem button{background:#222;border:1px solid #444;color:#ddd;height:34px}
+.btn{background:var(--or);color:#000;border:0;padding:13px 26px;font-weight:700;font-size:17px;border-radius:4px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--tx);border:1px solid #555}
+.actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:center;margin:20px 0}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#ccc;line-height:1.7}
+.check input{width:auto;margin-top:6px}
+.err{color:var(--hi);font-size:14px;text-align:center;min-height:20px}
+/* dashboard — fixed 1080px stage, same layout as the motion video, scaled to the screen */
+#dashView{direction:ltr}
+.stageWrap{width:100%;max-width:1400px;margin:0 auto;overflow:hidden;position:relative}
+.stage{width:1080px;padding:22px 28px 24px;transform-origin:top left;transform:var(--sc,scale(1));position:relative;background:#000}
+.stage::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px);z-index:30}
+.stage.glitch{animation:glitch .24s steps(3) 1}
+@keyframes glitch{0%{transform:var(--sc) translate(-9px,0);filter:drop-shadow(6px 0 rgba(255,0,60,.75)) drop-shadow(-6px 0 rgba(0,220,255,.75))}33%{transform:var(--sc) translate(7px,2px)}66%{transform:var(--sc) translate(-3px,-1px);filter:none}100%{transform:var(--sc)}}
+.shead{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--ln);padding-bottom:12px;margin-bottom:22px;gap:10px}
+.shead .l1{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:22px}
+.shead .l2{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--mu);margin-top:6px}
+.shead .r{text-align:right}
+.shead .arT{font-weight:700;font-size:26px;color:var(--or);unicode-bidi:plaintext}
+.shead .btns{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
+.dash{position:relative;display:grid;grid-template-columns:290px 222px 510px}
+#wires{position:absolute;left:0;top:0;z-index:0;pointer-events:none}
+#tags{position:relative;z-index:2;pointer-events:none}
+.tg{position:absolute;background:#d7d7d7;color:#0a0a0a;font:700 12px 'JetBrains Mono',monospace;padding:1px 5px;white-space:nowrap}
+.left{display:flex;flex-direction:column;gap:20px;position:relative;z-index:1}
+.tasks{display:grid;grid-template-columns:250px 250px;gap:20px 10px;align-content:start;position:relative;z-index:1}
+.pn{background:var(--pn);border:1px solid var(--ln);font-family:'JetBrains Mono',monospace;font-size:14px;position:relative;overflow:hidden}
+.pn>.hd{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--or);color:#000;font-weight:700;font-size:18px;gap:8px}
+.pn>.hd span{font-weight:400;font-size:12px;white-space:nowrap}
+.pn>.bd{padding:10px}
+.task{min-height:300px;display:flex;flex-direction:column}
+.task>.bd{flex:1;display:flex;flex-direction:column}
+.task[data-st=queued]>.hd{background:#222;color:#8a8a8a}
+.task[data-st=running]>.hd{animation:flick .32s infinite alternate}
+.task[data-st=error]>.hd{background:#5a1a12;color:#ffb0a0}
+@keyframes flick{from{background:var(--or)}to{background:var(--orl)}}
+.task[data-st=running]::after{content:"";position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--orl),transparent);top:38px;animation:scan 1.1s linear infinite}
+@keyframes scan{from{transform:translateY(0)}to{transform:translateY(250px)}}
+.task.flash{animation:pflash .32s steps(2) 1}
+@keyframes pflash{0%{transform:translateX(-7px);filter:brightness(1.9)}50%{transform:translateX(5px)}100%{transform:none}}
+.task .ar{font-family:'IBM Plex Sans Arabic';direction:rtl;text-align:right;color:#bdbdbd;font-size:14px;margin-bottom:6px}
+.kv{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dotted #222}
+.kv i{font-style:normal;color:var(--mu)}
+.kv i::before{content:"○ ";color:#a0a0a0}
+.kv b{color:#fff;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%}
+.viz{margin-top:auto;border:1px solid #2d2d2d;min-height:104px;padding:6px 8px;font-size:12px}
+.vl{display:flex;align-items:center;gap:6px;padding:2px 0;color:#ddd}
+.vl>b{color:#888;font-weight:400}
+.vl span{flex:1;direction:rtl;text-align:right;font-family:'IBM Plex Sans Arabic';overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.vl em{font-style:normal;font-weight:700;font-size:10px;padding:0 5px;background:#d8d8d8;color:#000}
+.vl em.m{background:#5a5a5a;color:#fff}.vl em.l{background:#2b3c5a;color:#cfe0ff}
+.vscan{color:#666;font-size:12px}
+.pbar{height:4px;background:#1c1c1c;margin-top:8px}
+.pbar i{display:block;height:100%;background:var(--or);width:0;transition:width .3s}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;direction:rtl}
+.chip{font-family:'IBM Plex Sans Arabic';font-size:12px;padding:2px 7px;border-radius:2px;background:#202020;color:#ddd}
+.chip.h{background:#e0e0e0;color:#000}.chip.m{background:#5a5a5a;color:#fff}.chip.l{background:#2b3c5a;color:#cfe0ff}
+.big{font-size:46px;font-weight:700;line-height:1}
+.pages{display:flex;flex-wrap:wrap;gap:3px}
+.pages s{width:13px;height:17px;border:1px solid #444;display:block;text-decoration:none}
+.pages s.r{border-color:#ddd;background:#3a3a3a}.pages s.o{border-color:var(--orl);background:#3a1240}.pages s.x{border-color:var(--hi)}
+.barc{display:flex;gap:2px;height:18px;margin-top:10px}
+.barc b{width:2px;background:#262626;display:block}.barc b:nth-child(3n){width:1px}.barc b.on{background:#ddd}
+.mission{font-family:'IBM Plex Sans Arabic';direction:rtl;text-align:right;line-height:1.75;font-size:16px;min-height:118px}
+.brief div{display:flex;align-items:center;gap:8px;padding:4px 0;color:#777}
+.brief div.ok{color:#fff}
+.brief div em{margin-left:auto;font-style:normal;font-size:12px;color:var(--mu)}
+.brief u{display:inline-block;width:15px;height:15px;border:1px solid #bbb;text-decoration:none;text-align:center;line-height:13px;font-size:11px}
+.brief div.ok u{background:#ddd;color:#000}
+.alog{height:220px;margin-top:6px;-webkit-mask-image:linear-gradient(transparent,#000 28%);mask-image:linear-gradient(transparent,#000 28%);overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;font-size:13px}
+.alog div,.console div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;line-height:1.6}
+.bottom{display:grid;grid-template-columns:490px 250px 1fr;gap:10px;margin-top:22px}
+.console{height:250px;-webkit-mask-image:linear-gradient(transparent,#000 25%);mask-image:linear-gradient(transparent,#000 25%);overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;font-size:13px;color:#bbb}
+.console div:last-child{color:#fff}
+.console .e{color:var(--hi)}
+.meter{display:flex;align-items:center;gap:8px;margin:9px 0}
+.meter i{font-style:normal;width:78px;color:var(--mu);font-size:13px}
+.meter s{display:flex;gap:3px}
+.meter s b{width:11px;height:13px;background:#222;display:block}
+.meter s b.on{background:#ddd}
+.wave{display:flex;align-items:flex-end;gap:3px;height:60px;margin-top:14px}
+.wave b{width:4px;background:#ddd;display:block}
+.sfoot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--ln);margin-top:22px;padding-top:12px}
+.sfoot .tp{font:700 17px 'JetBrains Mono',monospace;color:var(--or)}
+.sfoot .nm{color:#c8c8c8;font-size:18px;unicode-bidi:plaintext}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#f2f2f2;color:#000;padding:14px 22px;border-left:10px solid var(--or);font-family:'JetBrains Mono',monospace;font-weight:700;z-index:50;display:none;box-shadow:0 10px 40px #000;max-width:92vw}
+.stopbtn{background:#1a1a1a;color:#ddd;border:1px solid #555;padding:5px 12px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.notice{background:#1b1206;border:1px solid #5a3a10;color:#f3cf9a;padding:10px 14px;margin-bottom:14px;font-size:14px;text-align:start;line-height:1.7}
+/* intro / outro overlays */
+.ov{position:fixed;inset:0;background:#000;z-index:80;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;overflow:auto}
+.ov::after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.25) 0 1px,transparent 1px 3px);z-index:1}
+.ov.glitch{animation:oglitch .22s steps(3) 1}
+@keyframes oglitch{0%{transform:translate(-10px,0);filter:drop-shadow(6px 0 rgba(255,0,60,.8)) drop-shadow(-6px 0 rgba(0,220,255,.8))}50%{transform:translate(8px,2px)}100%{transform:none;filter:none}}
+#intro .k{direction:ltr;font-family:'JetBrains Mono',monospace;color:var(--mu);font-size:clamp(14px,3.5vw,22px)}
+#intro .bar{height:8px;background:var(--or);width:0;transition:width .5s;margin:20px auto;max-width:760px}
+#intro h2{font-size:clamp(40px,11vw,96px);margin:6px 0;unicode-bidi:plaintext;min-height:1.2em}
+#intro .s1{color:var(--orl);font-size:clamp(20px,5vw,36px);unicode-bidi:plaintext;min-height:1.5em}
+#intro .s2,#intro .s3{font-size:clamp(14px,3.6vw,24px);color:#d2d2d2;min-height:1.5em;unicode-bidi:plaintext;margin-top:6px}
+#intro .s3{color:#8a8a8a}
+#intro .cur{display:inline-block;width:14px;height:20px;background:var(--or);margin-top:14px;animation:blink .5s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+#outro{justify-content:flex-start;padding-top:0}
+#outro .tb{position:fixed;top:0;left:0;right:0;height:10px;background:var(--or)}
+#outro .done{unicode-bidi:plaintext;font-family:'JetBrains Mono',monospace;color:var(--or);font-weight:700;font-size:clamp(18px,4.5vw,30px);margin-top:46px}
+#outro h2{font-size:clamp(32px,8vw,64px);margin:18px 0 4px;direction:rtl}
+#outro .t1{color:var(--orl);font-size:clamp(18px,4.5vw,30px);direction:rtl}
+#outro .l{font-family:'JetBrains Mono',monospace;color:#d0d0d0;font-size:clamp(13px,3.3vw,19px);margin-top:10px;line-height:1.6;direction:ltr}
+#outro img{position:relative;z-index:3;width:min(230px,52vw);background:#fff;padding:8px;margin:22px auto 6px;border:3px solid var(--or);image-rendering:pixelated}
+#outro .scan{color:#bbb;font-size:15px;direction:rtl}
+#outro table{margin:16px auto 0;font-family:'JetBrains Mono',monospace;font-size:clamp(12px,3.3vw,18px);border-collapse:collapse;direction:ltr}
+#outro td{padding:7px 12px;border-bottom:1px solid #2a2a2a}#outro td.k{color:#888;text-align:left}#outro td.v{text-align:right;font-weight:700}
+#outro .btn{margin:22px 0 30px}
+#outro .fade{opacity:0;transition:opacity .5s}#outro .fade.on{opacity:1}
+/* report */
+#reportView{background:#efece5;color:#1b1b1b;padding:26px 0 40px;margin-top:20px}
+.rp{max-width:1000px;margin:0 auto;padding:0 18px}
+.rp h2{font-size:28px;margin:0}
+.rp h3{font-size:20px;margin:30px 0 10px;border-bottom:3px solid var(--or);padding-bottom:6px}
+.rp .meta{color:#555;font-size:14px;margin-top:6px;line-height:1.8}
+.rp .fr,.rp .en{direction:ltr;text-align:left;font-family:Georgia,'Times New Roman',serif}
+.rp .fr{color:#333}.rp .en{color:#555}
+.rp .score{display:flex;gap:20px;align-items:center;margin:18px 0;flex-wrap:wrap}
+.rp .gauge{width:130px;height:130px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:34px;font-family:'JetBrains Mono',monospace}
+.rp .gauge span{background:#efece5;width:100px;height:100px;border-radius:50%;display:grid;place-items:center}
+.rp .stats{display:flex;gap:10px;flex-wrap:wrap}
+.rp .stat{background:#fff;border:1px solid #d6d1c6;padding:10px 14px;min-width:110px}
+.rp .stat b{display:block;font-size:26px;font-family:'JetBrains Mono',monospace}
+.rk{background:#fff;border:1px solid #d6d1c6;margin:10px 0;border-inline-start:8px solid #999}
+.rk.h{border-inline-start-color:#d9432b}.rk.m{border-inline-start-color:#e2a21b}.rk.l{border-inline-start-color:#5c86c9}
+.rk summary{padding:12px 14px;cursor:pointer;display:flex;gap:10px;align-items:center;flex-wrap:wrap;list-style:none}
+.rk summary::-webkit-details-marker{display:none}
+.rk summary .t{font-weight:700;font-size:16px;flex:1;min-width:200px}
+.rk summary .t small{display:block;font-weight:400;color:#666;unicode-bidi:plaintext;text-align:start;font-size:13px}
+.tag{font-size:12px;padding:2px 8px;border-radius:3px;background:#eee;white-space:nowrap}
+.tag.h{background:#d9432b;color:#fff}.tag.m{background:#e2a21b;color:#000}.tag.l{background:#5c86c9;color:#fff}
+.rk .body{padding:0 14px 14px;line-height:1.85;font-size:15px}
+.rk .body dt{font-weight:700;color:#a0237a;margin-top:8px}
+.rk .body dd{margin:0}
+.ev{background:#f6f4ef;border:1px solid #e1dccf;padding:6px 10px;margin:4px 0;font-size:13px}
+.ev code{font-family:'JetBrains Mono',monospace;direction:ltr;unicode-bidi:embed}
+table.plan{width:100%;border-collapse:collapse;background:#fff}
+table.plan td,table.plan th{border:1px solid #d6d1c6;padding:8px 10px;text-align:start;vertical-align:top;font-size:14px}
+table.plan th{background:#1d1d1d;color:#fff}
+.rp ul{line-height:1.9}
+.sig{margin-top:36px;padding-top:16px;border-top:2px solid #1d1d1d;font-size:15px;line-height:1.8}
+.sig .l{direction:ltr;text-align:left;font-family:Georgia,serif}
+.rbtns{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.rbtns button{background:#1d1d1d;color:#fff;border:0;padding:10px 16px;border-radius:4px}
+.rbtns button.o{background:var(--or);color:#000;font-weight:700}
+.disc{background:#fff6e8;border:1px solid #e9c891;padding:12px 14px;font-size:14px;line-height:1.8;margin-top:14px}
+.hidden{display:none!important}
+@media (max-width:860px){
+ .grid2,.grid3{grid-template-columns:1fr}
+ .fitem{grid-template-columns:1fr 34px}.fitem select{grid-column:1/-1;grid-row:2}
+ .hero h1{font-size:26px}
+}
+@media (max-width:520px){.steps{margin-inline-start:0}}
+@media print{.top,#intakeView,#dashView,.rbtns{display:none!important}#reportView{margin:0;background:#fff}}
+
+.langs{display:flex;gap:4px;border:1px solid #444;border-radius:20px;padding:2px}
+.langs button{background:transparent;border:0;color:#bbb;padding:4px 11px;border-radius:16px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.langs button.on{background:#fff;color:#000;font-weight:700}
+.sec small{font-weight:400;color:var(--mu);font-size:12px}
+.tri3{color:#666;font-size:15px;unicode-bidi:plaintext;margin-top:2px}
+html[dir=ltr] label.f .fr{text-align:left}html[dir=rtl] label.f .fr{text-align:right}
+html:not([lang=ar]) .task .ar,html:not([lang=ar]) .mission{direction:ltr;text-align:left}
+html:not([lang=ar]) .rk .body,html:not([lang=ar]) .rp{text-align:left}
+
+/* ===== gradient theme (violet → magenta → orange) ===== */
+.pn>.hd,.card>.hd{background:var(--grad);color:#fff}
+.pn>.hd span,.card>.hd small{color:rgba(255,255,255,.85)}
+.task[data-st=queued]>.hd{background:#222;color:#8a8a8a}
+.task[data-st=queued]>.hd span{color:#777}
+.task[data-st=error]>.hd{background:#5a1a12;color:#ffb0a0}
+.task[data-st=running]>.hd{background:linear-gradient(90deg,#6A3CF6,#C42FA6,#F4793A,#C42FA6,#6A3CF6);background-size:300% 100%;animation:gflow 1.2s linear infinite}
+@keyframes gflow{from{background-position:0 0}to{background-position:150% 0}}
+.steps span.on,.btn,.rbtns button.o{background:var(--grad);color:#fff;border-color:transparent}
+.btn.ghost{background:transparent;color:var(--tx);border:1px solid #555}
+.hero h1 em,#intro h2,#outro .done,.shead .arT{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+#intro .bar,#outro .tb{background:var(--grad)}
+#intro .cur{background:var(--g2)}
+#outro img{border:4px solid transparent;background:linear-gradient(#fff,#fff) padding-box,var(--grad) border-box}
+.rp h3{border-bottom:3px solid;border-image:var(--grad) 1}
+.toast{border-left:10px solid var(--g2)}
+.brand b{color:var(--g3)}
+.task[data-st=running]::after{background:linear-gradient(90deg,transparent,var(--g1),var(--g2),var(--g3),transparent)}
+#tk_rapport{grid-column:1/-1;min-height:220px}
+.anonbox label.check{margin-top:10px}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand"><b>◤</b> tadreeb.agent <b>//</b> audit fiscal</div>
+  <div class="langs"><button data-lang="ar">ع</button><button data-lang="fr">FR</button><button data-lang="en">EN</button></div>
+  <div class="steps"><span id="st1" class="on" data-i="st1"></span><span id="st2" data-i="st2"></span><span id="st3" data-i="st3"></span></div>
+</div>
+
+<!-- ============ INTAKE ============ -->
+<section id="intakeView">
+<div class="hero">
+  <h1><span data-i="heroT1"></span> <em data-i="heroT2"></em></h1>
+  <p data-i="heroP"></p>
+  <div class="tri" data-io="tagline"></div>
+</div>
+<div class="wrap" id="formRoot"></div>
+</section>
+
+<!-- ============ DASHBOARD ============ -->
+<section id="dashView" class="hidden">
+  <div id="noAiNotice" class="notice hidden" style="max-width:1080px;margin:14px auto" data-i="noAi"></div>
+  <div class="stageWrap" id="stageWrap"><div class="stage" id="stage">
+    <div class="shead">
+      <div><div class="l1">&gt;&gt; tadreeb.agent — audit fiscal</div><div class="l2" id="sessLine">session —</div><div class="l2" style="color:var(--orl)" data-i="keepOn"></div><div class="l2" id="liveLine" style="color:#fff;font-size:16px;margin-top:6px"></div></div>
+      <div class="r"><div class="arT" data-i="heroT1"></div><div class="btns"><button class="stopbtn" id="muteBtn">♪ son</button><button class="stopbtn" id="skipBtn">⏭ skip</button><button class="stopbtn" id="stopBtn">■ stop</button></div></div>
+    </div>
+    <div class="dash" id="dash">
+      <canvas id="wires"></canvas>
+      <aside class="left">
+        <div class="pn"><div class="hd">brief <span>brief.md</span></div><div class="bd brief" id="briefBox"></div></div>
+        <div class="pn"><div class="hd">dossier <span id="dosRight">0 files</span></div><div class="bd">
+          <div style="display:flex;align-items:baseline;gap:8px"><span class="big" id="pgRead">00</span><span style="color:var(--mu)" id="pgTot">/ 0 pages</span></div>
+          <div class="barc" id="barc"></div></div></div>
+        <div class="pn mis"><div class="hd">mission <span>prompt.md</span></div><div class="bd"><div class="mission" id="missionTxt"></div>
+          <div class="kv"><i>model</i><b id="modelLbl">tadreeb-agent</b></div></div></div>
+        <div class="pn"><div class="hd">risques <span id="rkRight">0</span></div><div class="bd">
+          <div style="display:flex;align-items:baseline;gap:8px"><span class="big" id="rkBig">0</span><span style="color:var(--mu)">détectés</span></div>
+          <div class="chips" id="rkChips"></div></div></div>
+        <div class="pn agentp"><div class="hd">agent <span>push</span></div><div class="bd"><div style="font-weight:700">&gt;_ push</div><div class="alog" id="alog"></div></div></div>
+      </aside>
+      <div id="tags"></div>
+      <section class="tasks" id="tasks"></section>
+    </div>
+    <div class="bottom">
+      <div class="pn"><div class="hd">console / agent <span>live</span></div><div class="bd"><div class="console" id="console"></div></div></div>
+      <div class="pn"><div class="hd">métriques <span></span></div><div class="bd" id="meters"></div></div>
+      <div class="pn"><div class="hd">progression <span id="elapsed">0s</span></div><div class="bd">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="big" id="progN">0</span><span class="big" style="font-size:32px">/ 9</span></div>
+        <div class="wave" id="wave"></div>
+        <div class="kv" style="margin-top:8px"><i>tadreebpro.ai</i><b id="progPct">0%</b></div></div></div>
+    </div>
+    <div class="sfoot"><span class="tp">TadreebPro.ai</span><span class="nm" data-i="foot"></span></div>
+  </div></div>
+</section>
+
+<div class="ov hidden" id="intro">
+  <div class="k">&gt;&gt; tadreeb.agent</div><div class="bar" id="inBar"></div>
+  <h2 id="inT"></h2><div class="s1" id="inS1"></div><div class="s2" id="inS2"></div><div class="s3" id="inS3"></div><div><span class="cur"></span></div>
+</div>
+<div class="ov hidden" id="outro">
+  <div class="tb"></div>
+  <div class="done fade" id="ouDone">&gt;&gt; AUDIT TERMINÉ</div>
+  <h2 class="fade">الأستاذة سماح قسومة</h2>
+  <div class="t1 fade">مستشارة جبائية · مدرّبة دولية</div>
+  <div class="l fade"><b>Sameh Gassouma</b><br>Conseillère fiscale · Formatrice internationale<br>Tax Advisor · International Trainer</div>
+  <img class="fade" alt="QR" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAArIAAAKyAQAAAAABAgAtAAAJfklEQVR4Xu1dW24jRwzsXgvYTwvwAXwU6QZ7pMBHyg2so/gG1qcBCR2QxSJ75JGSj8iAgOKH1vPwRJ40u/gs9tHuIYdf93hqa03Pheg96D3MovWg9aD18F1+tXbsIXu7fNiecdgOfdP6/rhpcXl77q21Kx+HbeN9faP9N0X7jvadhYzx+TRc2m6c7LC18d7snF3wn96f42rb4eaT3dLmQ7u57fw5/mtaZ1pnwrdVfGuOTAZKjm+vJ/vHYOz5ix/t3Mfb9mmMt9ev3vfNdOvTbns+GSK2Bmx0qMRP0jfpm/RtRYBMzVVonFqBXGvPjlYNmAfdilsc7oYBn58bw2+GDjoECt+kb9K3q/hWMt7679H7a2hP79un0femTO2YEGie3MFcPFdTkzE+eFX7uvb17yJ7J2T239w5c4wCeNmH+292r8MYPLR008yTg0xXhW+TaJ1p/71cDwxImsA5Myzrf33Yx2ezjziHCx6zNDet74+/zYrkVcO83rf2HK0zrTPtOytSgBVo5bYjPsw5Q7iSCAafzuOTdN0WcEeR/yZ9k76t29Xml3nWzdDKdWuMz3OPCKSrmtmY7rDtPsxrM1SD63b0Q/uwYKZFKrXOtM7W19ld5NHsKMO38MGgauawFb5NEcgMSE6AFt5duH1+s/Jv0jfp23WBvlU2DRH/Smub2WhYxsy3HXogJS1Lz5XjHLIK9tOj7Tv6vvI3f8jfNOvQLMGI6buxSC1z23G8I/NtqgZT0oxPT4mj2mvDFJ2dg1Gp9av1+0Pr9y5yr/XLfIDHGKcEt1dxOZYxBw7w8rItlnz5XxoWKNw+O3Sku9f31XOlx4+sx7AnqSkRdwyvrQorqY2ufpGxQ57OKymrxDLTdtIL6cUj68W91i+iH0xX05NzBItC5ouMdhRwVdAkQC7rueDs3ev76rnS40fWY9ZPIvoRVVz4EZFKl4o7OgS67UhYjKrJrDmRPfnI60H72X33s1CcyAIQvEKjwjqspPeULYCNCc1jDhw2puq5JtH6ve/6fbT3m5HFaHirYAhTb+awpUa52YgoyRIRLzvmHu096PtKL35in5ybbbLaP+IgdMnKxaskHLtRXarVlL2q0jet3x9Zv4+4T5q6fFSaLXtvvNDL2k+NWWG8sVjLy5ejXhmhyexQLXnE93AP0XsQbi6kaBOYa6t6ZXIsTJk4NqdSy5h/i8Rc1qFonWmd/YR99mjrLOu5ipck6ExYucw0G2TlviRAmbhPpG/SN+nbmszdNZdpbWYLEHJE9clMC4TISShihiZVXyK7+ps8Gg7d6/tG/u2ioTs63DwdF1VcaIKLsuTSsuA+Ic+J6pUv5F7/3/Tcx7TXN0hmt3Y2/pHNqe0+X1pnc5v9TcHU5WA2Dns/93SyW05997efi7/dztmjTLQe9B6E8yvCasgINNZhGIvJaQIGLlSVRFhkavdGU46J8t1aZ7Inr0r0v7EuMsofUcAV2hMZNpDiZc0J4phslsv0d6TohG/CN+076/jm1SJRRlIMkzhXtZLZjxN94Nl5ikrK7BQQP5fWmfDtv+JbseDNFK4oZM6SL7aAx0OBecUVq/6AEuG8cH6WTWvHKByJoMmzm42fre3em50zrcItZwRN/HC0ox0eX059937eDHSJezDFRetM70E4v2pPZqQDnWtoOvVcG6srHdAgTMKxZScbekqUfxO+fRPtvyHV6zaVIFc6rppOZwbl8Pg4EKdYGVSvfCFaZ8L5hbBxNMlJ2H1TKeyoKqmGN6S1SaM3Dfyo5LjWmdaZcH7VnpxqRJw0KBkTpgDJTLkwBSRXQ5OyJ2VPyp68JsWi4DKxKFRUMrtMo7xrCW2Td0fmINUrU4TzwvkLe5KoVv5b+HQVNElmhZKk5go1rUlw4gsSvgnfbuBbMCgHizlYgtieE5SSwURJ9Ms2t7q5SpWlb9I36dsVMXuHFK42MxGjOiAY5MFhU9Gt49kCo1v2eVRkrOQYYhte5forO0p2lPadFeH8gJwn7GWSkEXMMpy4KDKJ9hzi4Hyz6kuEb8K3G/Ykc9uYj5MkyxX2R1eA4xarJqsHlTGUJXel8E34pn1nFd/ImMDsdbhu4cQV8IEDNlXSbkDCDRdqKJXmB5Ro39G+s5BKVy/qS6Koi11vrFeGUYnGgeA5YXCFjTqq59K+Lnvyhj3JfHfQliO3vWwrvUjM1RicBarNc+K0r2tf175zbd8hs5aFHC0qadX+ff/8hTFvU0uqg9ebcVJ69BICnhObQFx1zdI36Zv0bdV/q6k4tAk5GLhoyxkvqSJKJLhRoJyj36h+qi+haN/RvjOL9b+9jHZ4HUajbCGQj82pG92yp9i6Hcb9x5fRg1woZBy2Tyc0yx3+nDZ9N86bcdjbb2idaZ0J376L8XN99WFA5ZRbNg44u0aNhou57Xb489WHqSSbTn+Pvvvc4ncpT6aSdix9k75J367akyh6xOXMB+QEHMx/A6XQPNA0YptZ7RWxFuUDSrTvaN9ZSLS5sYgSrFyhYBGpXAzxTsY7Kqf/G7kETO4Qf4n07VK074TMCgbDcDEJLkjx2NAd6FekeCRfiMQcm1WVD9C+Lnty3Z50OgSQmJRRScbyIMWL4hHyT6aWZYmlCzgphW/CN+HbNZn4SyYSyqJ6BWRV7L+olbPIBApbc1Dlv8melD15RQraqhg5hMm1aT5OZdiiLMWEXtvExSB7Uvak7Ml1e7JCJegA4CAAmIisSPYjuGkVpJyKv6qFQPak8E349i/4tuzgLi2LWslIBYSHlkQLMw06xwlI36Rv0rcb+pbDFGtWAHCLbJIxU6CqlMuArHpl/gc0P0D6Jn27pW81DcA719ALkIOGEftnTVfUkiRvHjkp5wuyJ2VPyp68aU8yQMKWtiB9zREcNa0qM2whOUKnyCrFpyB9k75d17csf0QcJEe/oa00wyeFZRmQnLq60QeOVnHlA0pUVwHRewjhhADO6o5uttSeBdH57MnBqFwMXYxhA9I36dulSN9mfQt6reyES1qgIpzk/az2Mlm7qnnCC9E6E74tZDFuw66wF4AdpUH/SiuSPahTQBLkC56s80erXln4Jny7IrO+lf9WxAhgUM565ZrmkYFLBEiYkxO+Cd9WRDi/4r8xIDkbi8mgHGOD3WFb/4hSTPHhCd+Eb1fE9p1zd3EKoHDJWLbl0v9yY/HDCYLOfbzbfRHWnA/7/mhPcdF+pvegfee7cCT3/ywH6Zv0TfomnL+F8/cQ7Tvad2b5B9GgiprMc1JWAAAAAElFTkSuQmCC">
+  <div class="scan fade">امسح الرمز لحفظ جهة الاتصال · Scannez · Scan</div>
+  <table class="fade"><tr><td class="k">e-mail</td><td class="v">samehgassouma@tadreebpro.ai</td></tr><tr><td class="k">web</td><td class="v">tadreebpro.ai</td></tr></table>
+  <button class="btn fade" id="ouBtn" data-i="ouBtn"></button>
+</div>
+
+<!-- ============ REPORT ============ -->
+<section id="reportView" class="hidden"><div class="rp" id="reportBox"></div></section>
+
+<div class="toast" id="toast"></div>
+<script>
+'use strict';
+/* =====================================================================
+   Utilities
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const within = (p, ms, fb) => Promise.race([Promise.resolve(p).catch(()=>fb), sleep(ms).then(()=>fb)]);
+/* Western digits everywhere (12, not ١٢) */
+const nd = s => typeof s !== 'string' ? s : s.replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x660)).replace(/[۰-۹]/g, d => String(d.charCodeAt(0) - 0x6F0)).replace(/٫/g, '.').replace(/٬/g, ' ');
+function deepND(o){ if(typeof o==='string') return nd(o); if(Array.isArray(o)) return o.map(deepND); if(o && typeof o==='object'){ for(const k in o) o[k]=deepND(o[k]); } return o; }
+const LOC = {ar:'fr-FR', fr:'fr-FR', en:'en-US'};
+const fmtL = (n, l) => (n == null || isNaN(n)) ? '—' : Number(n).toLocaleString(LOC[l], {maximumFractionDigits: 3});
+const CUR = {ar:'د.ت', fr:'DT', en:'TND'};
+const money = (n, l) => `${fmtL(n, l)} ${CUR[l]}`;
+function num(id){ const v = nd(($('#'+id)?.value || '')).replace(/\s/g,'').replace(/,/g,'.'); if(v==='') return null; const x = parseFloat(v); return isNaN(x) ? null : x; }
+const LANGS = ['ar','fr','en'];
+let L = 'ar';
+try { const s = localStorage.getItem('tadreeb_lang'); if(LANGS.includes(s)) L = s; } catch(e){}
+const T3 = (ar, fr, en) => ({ar, fr, en});
+const tx = (o, l=L) => o == null ? '' : typeof o === 'string' ? o : (o[l] || o.fr || o.ar || o.en || '');
+
+/* =====================================================================
+   I18N dictionary
+   ===================================================================== */
+const I18N = {
+  st1:T3('1 الملف','1 Dossier','1 File'), st2:T3('2 الوكيل','2 Agent','2 Agent'), st3:T3('3 التقرير','3 Rapport','3 Report'),
+  heroT1:T3('وكيل جبائي ذكي','Agent fiscal IA','AI tax agent'), heroT2:T3('يفحص ملفك','qui examine votre dossier','that reviews your file'),
+  heroP:T3('ارفع وثائق الحريف وأدخل المعطيات الأولية. يقرأ الوكيل كل صفحة، ويطابق الأرقام، ويفحص الأداء على القيمة المضافة والخصم من المورد والفوترة الإلكترونية والآجال ومعلوم الطابع، ثم يرتّب المخاطر حسب الخطورة في تقرير مفصّل.',
+    "Déposez les pièces du client et saisissez les données de base. L'agent lit chaque page, rapproche les chiffres, contrôle la TVA, les retenues à la source, la facturation électronique, les délais et le droit de timbre, puis classe les risques par gravité dans un rapport détaillé.",
+    "Upload the client's documents and enter the key figures. The agent reads every page, reconciles the numbers, checks VAT, withholding tax, e-invoicing, deadlines and stamp duty, then ranks the risks by severity in a detailed report."),
+  tagline:T3('وكيل ذكي يفحص ملفّك الجبائي','Un agent IA pré-audite votre dossier fiscal','An AI agent pre-audits your tax file'),
+  notice:T3('⚠ هذا فحص أوّلي يساعد المستشار ولا يعوّضه: كل نتيجة تحتاج تحققاً مهنياً، والسند القانوني المقترح يُراجَع في النصوص الرسمية. يُستحسن إخفاء هوية الحريف (اسم مستعار، دون معرّف جبائي حقيقي) أثناء التجارب.',
+    "⚠ Pré-audit d'aide au conseiller, qui ne le remplace pas : chaque constat doit être validé par un professionnel et chaque référence légale vérifiée dans les textes officiels. Anonymisez le client pendant les essais (pseudonyme, sans vrai matricule fiscal).",
+    '⚠ A preliminary review that assists the advisor and does not replace them: every finding needs professional validation and every legal reference must be checked against official texts. Anonymise the client during tests (alias, no real tax ID).'),
+  secA:T3('أ — هوية الملف','A — Identification du dossier','A — File identification'),
+  secB:T3('ب — المعطيات الرقمية الأولية (بالدينار)','B — Données chiffrées (DT)','B — Key figures (TND)'),
+  hintB:T3('يكفي ملء ما يتوفّر؛ كل خانة فارغة يتجاوزها الوكيل. هذه الأرقام تُقارَن آلياً ثم بالوثائق المرفوعة.',
+    'Renseignez seulement ce qui est disponible ; les champs vides sont ignorés. Ces chiffres sont comparés automatiquement, puis aux pièces déposées.',
+    'Fill in only what you have; empty fields are skipped. These figures are compared automatically, then against the uploaded documents.'),
+  subCA:T3('رقم المعاملات',"Chiffre d'affaires",'Turnover'), subTVA:T3('الأداء على القيمة المضافة','TVA','VAT'),
+  subRS:T3('الخصم من المورد','Retenue à la source','Withholding tax'), subDiv:T3('الفوترة والآجال والطابع','Facturation, délais et timbre','Invoicing, deadlines and stamp duty'),
+  secC:T3('ج — الوثائق','C — Pièces du dossier','C — Documents'),
+  dropT:T3('اسحب الملفات هنا','Glissez les fichiers ici','Drop files here'), or:T3('أو','ou','or'), pick:T3('اختيار ملفات','Choisir des fichiers','Choose files'),
+  hintC:T3('حدّد نوع كل وثيقة ليعرف الوكيل كيف يقرؤها. الصفحات الممسوحة تُقرأ بالرؤية الآلية (حتى 30 صفحة في الفحص الواحد).',
+    'Indiquez le type de chaque pièce pour guider la lecture. Les pages scannées sont lues par vision artificielle (jusqu\'à 30 pages par contrôle).',
+    "Set each document's type to guide the reading. Scanned pages are read by computer vision (up to 30 pages per review)."),
+  secD:T3('د — توجيهات المستشار',"D — Consignes de l'expert","D — Advisor's instructions"),
+  f_notes:T3('ما الذي يقلقك في هذا الملف؟ أسئلة محدّدة للوكيل',"Points d'attention / questions pour l'agent",'Concerns / specific questions for the agent'),
+  'f_notes.ph':T3('مثال: الحريف يصدّر جزءاً من إنتاجه، وأشكّ في احتساب الأداء على مشتريات المعدّات…',"ex. : le client exporte une partie de sa production ; je doute du traitement de la TVA sur les achats d'équipements…",'e.g. the client exports part of its output; I doubt the VAT treatment of equipment purchases…'),
+  consent:T3('أقرّ بأن الملفات خالية من المعطيات الشخصية غير الضرورية، أو أنني تحصّلت على موافقة الحريف على معالجتها.','Je certifie que les fichiers ne contiennent pas de données personnelles superflues, ou que le client a consenti à leur traitement.','I confirm the files contain no unnecessary personal data, or that the client has consented to their processing.'),
+  run:T3('▶ شغّل الوكيل',"▶ Lancer l'agent",'▶ Run the agent'), demo:T3('جرّب بملف تجريبي','Essayer avec un dossier de démo','Try a demo file'),
+  errNone:T3('أضف وثيقة واحدة على الأقل أو بعض المعطيات الرقمية.','Ajoutez au moins un document ou quelques chiffres.','Add at least one document or some figures.'),
+  errConsent:T3('يرجى تأكيد الإقرار الخاص بسرّية المعطيات.','Veuillez cocher la déclaration de confidentialité.','Please tick the confidentiality statement.'),
+  noAi:T3('الذكاء الاصطناعي غير متاح في هذا العرض: يعمل الوكيل بمحرّك القواعد الحسابية فقط (دون قراءة دلالية للوثائق). افتح الصفحة في Claude لتفعيل التحليل الكامل.',
+    "IA indisponible dans cet affichage : l'agent fonctionne avec le seul moteur de règles (sans lecture sémantique des pièces). Ouvrez la page dans Claude pour l'analyse complète.",
+    'AI is unavailable in this view: the agent runs on the rules engine only (no semantic reading of documents). Open the page in Claude for the full analysis.'),
+  foot:T3('سماح قسومة · مستشارة جبائية · مدرّبة دولية','Sameh Gassouma · Conseillère fiscale · Formatrice internationale','Sameh Gassouma · Tax Advisor · International Trainer'),
+  introS1:T3('يراجع ملفّك الجبائي ويكشف المخاطر','examine votre dossier fiscal et détecte les risques','reviews your tax file and flags the risks'),
+  auditDone:T3('اكتمل الفحص · {n} خطر · المؤشّر {s}/100','>> AUDIT TERMINÉ · {n} risque(s) · indice {s}/100','>> AUDIT COMPLETE · {n} risk(s) · index {s}/100'),
+  trans:T3('جارٍ الترجمة الآلية…','Traduction automatique…','Translating…'),
+  transNA:T3('الترجمة الآلية للنصوص المكتوبة تتطلّب فتح الصفحة في Claude.','La traduction automatique des textes saisis nécessite d’ouvrir la page dans Claude.','Automatic translation of typed text requires opening the page in Claude.'),
+  transErr:T3('تعذّرت الترجمة الآلية؛ النص بقي كما هو.','Traduction impossible ; le texte est conservé.','Translation failed; the text was kept as is.'),
+  transOk:T3('✓ تُرجمت النصوص المكتوبة.','✓ Textes saisis traduits.','✓ Typed text translated.'),
+  resumeT:T3('فحص سابق لم يكتمل ({n}/9 مراحل) محفوظ على هذا الجهاز.','Un contrôle précédent inachevé ({n}/9 étapes) est enregistré sur cet appareil.','An unfinished review ({n}/9 steps) is saved on this device.'),
+  doneT:T3('آخر فحص مكتمل محفوظ على هذا الجهاز.','Le dernier contrôle terminé est enregistré sur cet appareil.','The last completed review is saved on this device.'),
+  resumeBtn:T3('▶ استئناف الفحص','▶ Reprendre le contrôle','▶ Resume the review'), showBtn:T3('عرض التقرير','Voir le rapport','View report'), discardBtn:T3('حذف','Effacer','Discard'),
+  liveWait:T3('المرحلة {n}/9 · {t} · انتظار ردّ Claude منذ {s} ث — إن طال الانتظار اضغط ⏭ skip','Étape {n}/9 · {t} · réponse de Claude attendue depuis {s} s — si c’est trop long, touchez ⏭ skip','Step {n}/9 · {t} · waiting for Claude for {s}s — if it takes too long, tap ⏭ skip'),
+  liveRun:T3('المرحلة {n}/9 · {t} · جارٍ العمل','Étape {n}/9 · {t} · en cours','Step {n}/9 · {t} · working'),
+  'tk.anon':T3('إخفاء الهوية على جهازك','Anonymisation sur l’appareil','On-device anonymisation'),
+  secE:T3('هـ — إخفاء الهوية وسرّية المعطيات','E — Anonymisation et confidentialité','E — Anonymisation and confidentiality'),
+  anonOn:T3('إخفاء الهوية آلياً على جهازك قبل أي تحليل (موصى به)','Anonymiser automatiquement sur votre appareil avant toute analyse (recommandé)','Automatically anonymise on your device before any analysis (recommended)'),
+  f_anon_names:T3('أسماء أخرى يجب إخفاؤها — اسم في كل سطر (المسيّر، الشركاء، المزوّدون الأفراد…)','Autres noms à masquer — un par ligne (gérant, associés, fournisseurs personnes physiques…)','Other names to hide — one per line (manager, partners, individual suppliers…)'),
+  'f_anon_names.ph':T3('مثال:\nأحمد بن صالح\nمؤسسة النور','ex. :\nAhmed Ben Salah\nÉtablissement Ennour','e.g.\nAhmed Ben Salah\nEnnour Establishment'),
+  anonHint:T3('يُستبدل على جهازك، قبل الإرسال: اسم الحريف، الأسماء المذكورة، المعرّف الجبائي، أرقام بطاقات التعريف، الحسابات البنكية (RIB/IBAN) والبطاقات، الهواتف، البريد الإلكتروني والعناوين، برموز مثل [NOM-1]. جدول الرموز لا يغادر جهازك.',
+    'Remplacés sur votre appareil avant envoi : nom du client, noms indiqués, matricule fiscal, n° de CIN, comptes (RIB/IBAN) et cartes, téléphones, e-mails et adresses, par des codes comme [NOM-1]. La table de correspondance ne quitte pas votre appareil.',
+    'Replaced on your device before sending: client name, listed names, tax ID, ID card numbers, bank accounts (RIB/IBAN) and cards, phones, emails and addresses, with codes like [NOM-1]. The code table never leaves your device.'),
+  ocrOn:T3('قراءة الصفحات الممسوحة بالرؤية الآلية — تنبيه: صورة الصفحة تُرسل كما هي قبل الإخفاء','Lire les pages scannées par vision — attention : l’image de la page est envoyée telle quelle, avant anonymisation','Read scanned pages by vision — note: the page image is sent as is, before anonymisation'),
+  ocrOff:T3('قراءة الصور معطّلة لحماية المعطيات','lecture des images désactivée (confidentialité)','image reading disabled (privacy)'),
+  showReal:T3('👁 إظهار المعطيات الأصلية (على جهازك فقط)','👁 Afficher les données réelles (sur cet appareil)','👁 Show real data (this device only)'),
+  hideReal:T3('🔒 إخفاء المعطيات الأصلية','🔒 Masquer les données réelles','🔒 Hide real data'),
+  methAnon:T3('إخفاء الهوية: {n} عنصراً استُبدل برموز على الجهاز قبل أي إرسال، وجدول الرموز لم يغادر الجهاز.','Anonymisation : {n} élément(s) remplacé(s) par des codes sur l’appareil avant tout envoi ; la table de correspondance n’a pas quitté l’appareil.','Anonymisation: {n} item(s) replaced by codes on the device before sending; the code table never left the device.'),
+  methAnonOff:T3('إخفاء الهوية كان معطّلاً: أُرسل النص كما هو.','Anonymisation désactivée : le texte a été envoyé tel quel.','Anonymisation was off: text was sent as is.'),
+  methOcrRaw:T3('الصفحات الممسوحة ({n}) أُرسلت كصور للقراءة الآلية قبل الإخفاء.','Les pages scannées ({n}) ont été envoyées en image pour lecture, avant anonymisation.','Scanned pages ({n}) were sent as images for reading, before anonymisation.'),
+  keepOn:T3('● أبقِ الشاشة مفتوحة حتى نهاية الفحص','● Gardez l’écran allumé jusqu’à la fin','● Keep the screen on until the end'),
+  ouBtn:T3('عرض التقرير المفصّل ↓','Voir le rapport détaillé ↓','View the detailed report ↓'),
+  delBtn:T3('حذف','Supprimer','Remove'),
+  noClient:T3('حريف (دون اسم)','Client (sans nom)','Client (unnamed)'),
+  demoAct:T3('تجارة جملة مواد البناء','Commerce de gros de matériaux de construction','Building materials wholesale'),
+  demoNotes:T3('ملف تجريبي بمعطيات وهمية. أريد التركيز على الأداء القابل للطرح وعلى الخصم من المورد على الكراء.','Dossier de démonstration fictif. Insister sur la TVA déductible et la retenue à la source sur les loyers.','Fictitious demo file. Focus on input VAT and withholding tax on rent.'),
+  demoPer:T3('جانفي – جوان 2025','janvier – juin 2025','January – June 2025'),
+  // fields
+  f_client:T3('اسم الحريف أو اسم مستعار','Client / pseudonyme','Client / alias'), 'f_client.ph':T3('مثال: حريف 012','ex. : Client 012','e.g. Client 012'),
+  f_forme:T3('الشكل القانوني','Forme juridique','Legal form'),
+  'f_forme.sarl':T3('شركة ذات مسؤولية محدودة (SARL)','SARL','Limited liability company (SARL)'),
+  'f_forme.suarl':T3('شركة الشخص الواحد ذات المسؤولية المحدودة (SUARL)','SUARL','Single-member LLC (SUARL)'),
+  'f_forme.sa':T3('شركة خفية الاسم (SA)','Société anonyme (SA)','Public limited company (SA)'),
+  'f_forme.ppl':T3('شخص طبيعي — مهنة حرة','Personne physique — profession libérale','Individual — liberal profession'),
+  'f_forme.ppc':T3('شخص طبيعي — نشاط تجاري','Personne physique — activité commerciale','Individual — commercial activity'),
+  'f_forme.asso':T3('جمعية','Association','Association'), 'f_forme.autre':T3('أخرى','Autre','Other'),
+  f_activite:T3('النشاط الرئيسي','Activité principale','Main activity'), 'f_activite.ph':T3('مثال: تجارة جملة مواد بناء','ex. : commerce de gros de matériaux','e.g. building materials wholesale'),
+  f_regime:T3('النظام الجبائي','Régime fiscal','Tax regime'),
+  'f_regime.reel':T3('النظام الحقيقي','Régime réel','Actual (real) regime'), 'f_regime.forfait':T3('النظام التقديري','Régime forfaitaire','Flat-rate regime'), 'f_regime.nsp':T3('غير محدّد','Non précisé','Not specified'),
+  f_periode:T3('الفترة المفحوصة','Période / exercice','Period / fiscal year'), 'f_periode.ph':T3('مثال: 2025 أو جانفي–جوان 2026','ex. : 2025 ou janvier–juin 2026','e.g. 2025 or Jan–Jun 2026'),
+  f_assuj:T3('الخضوع للأداء على القيمة المضافة','Assujettissement à la TVA','VAT registration'),
+  'f_assuj.oui':T3('خاضع كلياً','Totalement assujetti','Fully registered'), 'f_assuj.partiel':T3('خاضع جزئياً','Partiellement assujetti','Partially registered'),
+  'f_assuj.non':T3('غير خاضع','Non assujetti','Not registered'), 'f_assuj.nsp':T3('لا أعرف','Je ne sais pas','Not sure'),
+  f_elfob:T3('مُلزَم بالفوترة الإلكترونية (ElFatoora)؟','Facturation électronique obligatoire (ElFatoora) ?','E-invoicing mandatory (ElFatoora)?'),
+  'f_elfob.nsp':T3('لا أعرف / للتحقق','Je ne sais pas / à vérifier','Not sure / to check'), 'f_elfob.oui':T3('نعم','Oui','Yes'), 'f_elfob.non':T3('لا','Non','No'),
+  f_mf:T3('المعرّف الجبائي (اختياري)','Matricule fiscal (optionnel)','Tax ID (optional)'), 'f_mf.ph':T3('يُفضّل تركه فارغاً','de préférence vide','preferably leave empty'),
+  n_decl_dues:T3('عدد التصاريح الشهرية المستوجبة','Déclarations mensuelles dues','Monthly returns due'),
+  n_ca_decl:T3('رقم المعاملات المصرّح به (دون أداء)','CA HT déclaré','Declared turnover (excl. VAT)'),
+  n_ca_compta:T3('رقم المعاملات حسب المحاسبة','CA HT comptabilisé','Turnover per accounts (excl. VAT)'),
+  n_taux:T3('النسبة الأساسية المطبّقة (%)','Taux de TVA principal appliqué (%)','Main VAT rate applied (%)'), 'n_taux.ph':T3('مثال: 19','ex. : 19','e.g. 19'),
+  n_tvac_decl:T3('الأداء المُحصَّل المصرّح به','TVA collectée déclarée','Output VAT declared'),
+  n_tvac_fact:T3('الأداء المُحصَّل حسب فواتير البيع','TVA collectée selon factures de vente','Output VAT per sales invoices'),
+  n_tvad_decl:T3('الأداء القابل للطرح المصرّح به','TVA déductible déclarée','Input VAT declared'),
+  n_tvad_fact:T3('الأداء القابل للطرح المبرَّر بفواتير شراء','TVA déductible justifiée par factures','Input VAT supported by invoices'),
+  n_credit:T3('فائض الأداء (القرض) المُرحَّل','Crédit de TVA reporté','VAT credit carried forward'),
+  n_rs_dues:T3('الخصم الواجب حسب الدفوعات','Retenues dues selon les paiements','Withholding due on payments'),
+  n_rs_decl:T3('الخصم المصرّح به والمدفوع','Retenues déclarées / versées','Withholding declared / paid'),
+  n_rs_benef:T3('عدد المستفيدين من دفوعات خاضعة للخصم','Nombre de bénéficiaires','Number of payees'),
+  n_rs_cert:T3('عدد شهادات الخصم المسلّمة','Attestations de retenue délivrées','Withholding certificates issued'),
+  n_fact_emises:T3('عدد الفواتير الصادرة','Factures émises','Invoices issued'),
+  n_fact_elec:T3('عدد الفواتير عبر ElFatoora','Factures via ElFatoora','Invoices via ElFatoora'),
+  n_decl_dep:T3('عدد التصاريح المودعة','Déclarations déposées','Returns filed'),
+  n_decl_retard:T3('منها مودعة بعد الأجل','Dont déposées en retard','Of which filed late'),
+  n_timbre_nb:T3('عدد الفواتير الخاضعة لمعلوم الطابع','Factures soumises au droit de timbre','Invoices subject to stamp duty'),
+  n_timbre_tarif:T3('تعريفة الطابع للفاتورة (تُراجَع حسب النص الساري)','Tarif du timbre par facture (à vérifier)','Stamp duty per invoice (to be verified)'),
+  n_timbre_decl:T3('معلوم الطابع المصرّح به','Droit de timbre déclaré','Stamp duty declared'),
+  n_especes:T3('دفوعات نقدية تتجاوز السقف المسموح','Paiements en espèces au-delà du plafond','Cash payments above the legal ceiling'),
+  // tasks
+  'tk.lecture':T3('قراءة الوثائق واستخراج النص','Lecture des pièces et extraction','Reading & text extraction'),
+  'tk.coherence':T3('مطابقة المعطيات بالوثائق','Rapprochement données ↔ pièces','Figures vs documents'),
+  'tk.tva':T3('الأداء على القيمة المضافة','Taxe sur la valeur ajoutée','Value added tax'),
+  'tk.rs':T3('الخصم من المورد','Retenue à la source','Withholding tax'),
+  'tk.elf':T3('الفوترة الإلكترونية','Facturation électronique','E-invoicing'),
+  'tk.delais':T3('الآجال والتصاريح','Délais et déclarations','Deadlines & returns'),
+  'tk.timbre':T3('معلوم الطابع ومخاطر أخرى','Droit de timbre et autres risques','Stamp duty & other risks'),
+  'tk.rapport':T3('تحرير التقرير','Rédaction du rapport','Drafting the report'),
+  // report
+  rTitle:T3('تقرير الفحص الجبائي الأوّلي','Rapport de pré-audit fiscal','Preliminary tax review report'),
+  rClient:T3('الحريف','Client','Client'), rPeriod:T3('الفترة','Période','Period'), rDate:T3('تاريخ الفحص','Date du contrôle','Review date'),
+  rDocs:T3('الوثائق','Pièces','Documents'), wFiles:T3('ملف','fichier(s)','file(s)'), wPages:T3('صفحة','page(s)','page(s)'), wOcr:T3('صفحة مقروءة بالرؤية الآلية','page(s) lue(s) par vision','page(s) read by vision'),
+  rScore:T3('مؤشّر السلامة الجبائية (تقديري)','Indice de conformité fiscale (indicatif)','Tax compliance index (indicative)'),
+  'sev.eleve':T3('مرتفع','Élevé','High'), 'sev.moyen':T3('متوسط','Moyen','Medium'), 'sev.faible':T3('منخفض','Faible','Low'),
+  'cert.confirme':T3('مؤكَّد','Confirmé','Confirmed'), 'cert.probable':T3('محتمل','Probable','Likely'), 'cert.a_verifier':T3('يُتحقَّق منه','À vérifier','To verify'),
+  'src.rule':T3('قاعدة حسابية','Règle de calcul','Calculation rule'), 'src.ai':T3('تحليل الوثائق','Analyse des pièces','Document analysis'), 'src.rule+ai':T3('قاعدة + وثائق','Règle + pièces','Rule + documents'),
+  rExec:T3('الخلاصة التنفيذية','Synthèse','Executive summary'), rRisks:T3('المخاطر مرتّبة حسب الخطورة','Risques classés par gravité','Risks ranked by severity'),
+  dExpl:T3('الشرح','Explication','Explanation'), dImpact:T3('الأثر المحتمل','Impact potentiel','Potential impact'), dAction:T3('الإجراء المقترح','Action recommandée','Recommended action'),
+  dLegal:T3('السند القانوني (للمراجعة)','Base légale (à vérifier)','Legal basis (to verify)'), dLegalNone:T3('يُحدَّد من طرف المستشار','À préciser par le conseiller','To be set by the advisor'),
+  dEvid:T3('الأدلّة','Preuves','Evidence'), pAbbr:T3('ص','p.','p.'), docAnalysis:T3('تحليل الوثائق: ','Analyse des pièces : ','Document analysis: '),
+  noRisks:T3('لم يكشف الفحص مخاطر بناءً على المعطيات والوثائق المتاحة.','Aucun risque relevé à partir des données et pièces disponibles.','No risk found based on the available figures and documents.'),
+  rPlan:T3('خطة العمل المقترحة',"Plan d'action proposé",'Proposed action plan'), thAction:T3('الإجراء','Action','Action'), thDelay:T3('الأجل','Délai','Timing'), thRisks:T3('المخاطر','Risques','Risks'),
+  'd.immediat':T3('فوري','Immédiat','Immediate'), 'd.semaine':T3('خلال أسبوع','Sous une semaine','Within a week'), 'd.mois':T3('خلال شهر','Sous un mois','Within a month'),
+  rPav:T3('نقاط يتحقّق منها المستشار','Points à vérifier par le conseiller','Points for the advisor to check'),
+  rDm:T3('وثائق ناقصة لإتمام الفحص','Pièces manquantes','Missing documents'),
+  rMsg:T3('رسالة مبسّطة للحريف (مسودة)','Message simplifié au client (brouillon)','Plain-language note to the client (draft)'),
+  rMeth:T3('المنهجية وحدود الفحص','Méthodologie et limites','Methodology and limits'),
+  methDocs:T3('الوثائق المقروءة:','Pièces lues :','Documents read:'), noDocs:T3('لا توجد وثائق','Aucune pièce','No documents'), partOcr:T3('(منها مقروءة آلياً)','(dont lues par vision)','(some read by vision)'),
+  methRules:T3('القواعد الحسابية: مقارنة آلية للأرقام المدخلة؛ عتبات الخطورة داخلية وتقديرية (فارق ≥ 1000 د.ت أو ≥ 5% = مرتفع؛ ≥ 200 د.ت أو ≥ 1% = متوسط).',
+    'Règles de calcul : comparaison automatique des chiffres saisis ; seuils de gravité internes et indicatifs (écart ≥ 1 000 DT ou ≥ 5 % = élevé ; ≥ 200 DT ou ≥ 1 % = moyen).',
+    'Calculation rules: automatic comparison of the figures entered; internal, indicative severity thresholds (gap ≥ 1,000 TND or ≥ 5% = high; ≥ 200 TND or ≥ 1% = medium).'),
+  methAI:T3('تحليل الوثائق أُنجز بالذكاء الاصطناعي (Claude) مع إلزامه بالاستشهاد بالوثائق؛ قد يخطئ في القراءة أو الاستنتاج.',"L'analyse des pièces a été réalisée par IA (Claude), tenue de citer ses sources ; elle peut se tromper de lecture ou de conclusion.",'Documents were analysed by AI (Claude), required to cite its sources; it can misread or draw wrong conclusions.'),
+  methNoAI:T3('لم يُفعَّل تحليل الوثائق بالذكاء الاصطناعي في هذا العرض: النتائج مبنية على القواعد الحسابية فقط.',"L'analyse IA n'était pas disponible : résultats fondés sur les seules règles de calcul.",'AI analysis was not available: results rely on the calculation rules only.'),
+  methTrunc:T3('وثائق طويلة قُرئ جزء منها فقط في بعض المراحل: ','Pièces longues partiellement lues à certaines étapes : ','Long documents only partly read at some stages: '),
+  methOcrSkip:T3(' صفحة/صورة ممسوحة لم تُقرأ (حدّ الرؤية الآلية أو عدم توفّرها).',' page(s)/image(s) scannée(s) non lue(s) (plafond atteint ou vision indisponible).',' scanned page(s)/image(s) not read (limit reached or vision unavailable).'),
+  methErr:T3(' عملية تحليل تعذّرت أثناء الفحص؛ يُنصح بإعادة التشغيل.'," analyse(s) en échec pendant le contrôle ; relancez l'agent.",' analysis step(s) failed during the review; consider re-running.'),
+  methScore:T3('مؤشّر السلامة = 100 × e^(−م/80)، حيث م مجموع أوزان المخاطر (مرتفع 15، متوسط 7، منخفض 3) مضروبة في درجة اليقين (مؤكَّد 1، محتمل 0.7، يُتحقَّق منه 0.4)؛ مؤشّر توجيهي لا قيمة قانونية له.',
+    'Indice = 100 × e^(−S/80), S étant la somme des poids des risques (élevé 15, moyen 7, faible 3) × degré de certitude (confirmé 1, probable 0,7, à vérifier 0,4) ; indicatif, sans valeur juridique.',
+    'Index = 100 × e^(−S/80), where S is the sum of risk weights (high 15, medium 7, low 3) × certainty (confirmed 1, likely 0.7, to verify 0.4); indicative only, no legal value.'),
+  dlHtml:T3('⬇ تحميل التقرير (HTML)','⬇ Télécharger le rapport (HTML)','⬇ Download report (HTML)'), dlJson:T3('⬇ البيانات (JSON)','⬇ Données (JSON)','⬇ Data (JSON)'),
+  cpTxt:T3('⧉ نسخ الخلاصة','⧉ Copier la synthèse','⧉ Copy summary'), newRun:T3('↺ فحص ملف جديد','↺ Nouveau dossier','↺ New file'),
+  copied:T3('نُسخت الخلاصة.','Synthèse copiée.','Summary copied.'), copyFail:T3('تعذّر النسخ في هذا العرض.','Copie impossible dans cet affichage.','Copy is not available in this view.'),
+  saveFail:T3('لم يتمّ الحفظ: ','Enregistrement annulé : ','Not saved: '), dlNA:T3('التحميل غير متاح في هذا العرض؛ استعمل زر النسخ.','Téléchargement indisponible ici ; utilisez Copier.','Download unavailable here; use Copy.'),
+  formSrc:T3('المعطيات الأولية (الاستمارة)','Données saisies (formulaire)','Figures entered (form)'),
+  mission:T3('افحص ملف «{c}» كمستشار جبائي: اقرأ كل وثيقة، وطابق الأرقام، واكشف كل خطر قد يكلّف خطية، ورتّبه حسب الخطورة مع الدليل، ثم حرّر تقريراً واضحاً.',
+    'Examine le dossier « {c} » comme un conseiller fiscal : lis chaque pièce, rapproche les chiffres, repère chaque risque de pénalité, classe-le par gravité avec la preuve, puis rédige un rapport clair.',
+    'Review the "{c}" file like a tax advisor: read every document, reconcile the figures, flag every penalty risk, rank it by severity with evidence, then write a clear report.')
+};
+const t = (k, l=L) => I18N[k] ? (I18N[k][l] || I18N[k].fr) : k;
+const others = (k) => LANGS.filter(x => x !== L).map(x => t(k, x)).join(' · ');
+
+/* =====================================================================
+   State
+   ===================================================================== */
+const TASKS = [
+  {id:'lecture', t:'lire-dossier'}, {id:'anon', t:'anonymiser'}, {id:'coherence', t:'cohérence'}, {id:'tva', t:'tva'}, {id:'rs', t:'retenue-src'},
+  {id:'elf', t:'elfatoora'}, {id:'delais', t:'délais'}, {id:'timbre', t:'timbre+'}, {id:'rapport', t:'rapport'}
+];
+const DOC_TYPES = {decl:T3('تصريح جبائي (شهري/سنوي)','Déclaration fiscale (mensuelle/annuelle)','Tax return (monthly/annual)'), vente:T3('فواتير بيع','Factures de vente','Sales invoices'),
+  achat:T3('فواتير شراء',"Factures d'achat",'Purchase invoices'), rs:T3('شهادات / تصاريح الخصم من المورد','Attestations / déclarations de retenue','Withholding certificates / returns'),
+  gl:T3('دفتر أستاذ / ميزان / قوائم مالية','Grand livre / balance / états financiers','General ledger / trial balance / financial statements'), banque:T3('كشف حساب بنكي','Relevé bancaire','Bank statement'),
+  contrat:T3('عقد','Contrat','Contract'), autre:T3('وثيقة أخرى','Autre pièce','Other document')};
+const SEV = {eleve:{c:'h',w:15}, moyen:{c:'m',w:7}, faible:{c:'l',w:3}};
+const CERT = {confirme:{k:1}, probable:{k:.7}, a_verifier:{k:.4}};
+function normSev(s){ s=(s||'').toString().toLowerCase(); if(/lev|مرتفع|high|haut/.test(s)) return 'eleve'; if(/moy|متوسط|med/.test(s)) return 'moyen'; return 'faible'; }
+function normCert(s){ s=(s||'').toString().toLowerCase(); if(/confirm|مؤك|certain/.test(s)) return 'confirme'; if(/prob|محتمل|likely/.test(s)) return 'probable'; return 'a_verifier'; }
+const S = { files:[], docs:[], fiches:[], rules:[], risks:[], extra:[], aborted:false, sample:null, imagesOK:false, report:null, t0:0, pagesTotal:0, pagesRead:0, ocrPages:0, ocrSkipped:0, truncated:[], tstate:{}, intake:null, aiErrors:0, runLang:'ar', sess:'', ctls:new Set(), pre:null, wake:null };
+
+/* =====================================================================
+   Intake form (generated, trilingual)
+   ===================================================================== */
+const FDEF = { f_client:{ph:1}, f_forme:{o:['sarl','suarl','sa','ppl','ppc','asso','autre']}, f_activite:{ph:1}, f_regime:{o:['reel','forfait','nsp']},
+  f_periode:{ph:1}, f_assuj:{o:['oui','partiel','non','nsp']}, f_elfob:{o:['nsp','oui','non']}, f_mf:{ph:1}, n_taux:{ph:1} };
+function fieldHTML(id){
+  const d = FDEF[id] || {}; const isNum = id.startsWith('n_');
+  if(id==='f_notes') return `<label class="f"><span data-i="${id}"></span><span class="fr" data-io="${id}"></span><textarea id="${id}" data-ph="${id}.ph"></textarea></label>`;
+  const ctrl = d.o ? `<select id="${id}">${d.o.map(o=>`<option value="${o}" data-i="${id}.${o}"></option>`).join('')}</select>`
+    : `<input id="${id}" ${isNum?'class="num" inputmode="decimal"':''} ${d.ph?`data-ph="${id}.ph"`:''}>`;
+  return `<label class="f"><span data-i="${id}"></span><span class="fr" data-io="${id}"></span>${ctrl}</label>`;
+}
+const card = (k, body) => `<div class="card"><div class="hd"><span data-i="${k}"></span><small data-io="${k}"></small></div><div class="bd">${body}</div></div>`;
+function buildForm(){
+  const sub = (k, ids, cols) => `<div class="sec"><span data-i="${k}"></span> <small class="fr" data-io="${k}"></small></div><div class="grid${cols}">${ids.map(fieldHTML).join('')}</div>`;
+  $('#formRoot').innerHTML = `<div id="resumeBox"></div><div class="notice" data-i="notice"></div>`
+   + card('secA', `<div class="grid3">${['f_client','f_forme','f_activite','f_regime','f_periode','f_assuj','f_elfob','f_mf','n_decl_dues'].map(fieldHTML).join('')}</div>`)
+   + card('secB', `<div class="hint" data-i="hintB"></div>` + sub('subCA',['n_ca_decl','n_ca_compta','n_taux'],3) + sub('subTVA',['n_tvac_decl','n_tvac_fact','n_tvad_decl','n_tvad_fact','n_credit'],2)
+        + sub('subRS',['n_rs_dues','n_rs_decl','n_rs_benef','n_rs_cert'],2) + sub('subDiv',['n_fact_emises','n_fact_elec','n_decl_dep','n_decl_retard','n_timbre_nb','n_timbre_tarif','n_timbre_decl','n_especes'],3))
+   + card('secC', `<div class="drop" id="drop"><div style="font-size:30px">⇪</div><div><b data-i="dropT"></b> <span data-i="or"></span> <button class="btn ghost" id="pickBtn" type="button" style="padding:6px 14px;font-size:14px" data-i="pick"></button></div>
+        <div class="hint mono" style="direction:ltr;margin-top:6px">PDF · JPG/PNG (scans) · XLSX/CSV · DOCX · TXT</div>
+        <input type="file" id="fileInput" multiple accept=".pdf,.png,.jpg,.jpeg,.webp,.xlsx,.xls,.csv,.docx,.txt,.md" class="hidden"></div>
+        <div class="flist" id="flist"></div><div class="hint" style="margin-top:10px" data-i="hintC"></div>`)
+   + card('secD', `${fieldHTML('f_notes')}
+        <label class="check" style="margin-top:12px"><input type="checkbox" id="f_consent"> <span data-i="consent"></span></label>`)
+   + card('secE', `<div class="anonbox"><label class="check"><input type="checkbox" id="f_anon" checked> <span data-i="anonOn"></span></label>
+        <div class="hint" style="margin:8px 0 12px" data-i="anonHint"></div>
+        <label class="f"><span data-i="f_anon_names"></span><span class="fr" data-io="f_anon_names"></span><textarea id="f_anon_names" data-ph="f_anon_names.ph" style="min-height:80px"></textarea></label>
+        <label class="check"><input type="checkbox" id="f_ocr" checked> <span data-i="ocrOn"></span></label></div>`)
+   + `<div class="hint" id="trState" style="text-align:center;min-height:20px;color:var(--orl)"></div><div class="err" id="intakeErr"></div><div class="actions"><button class="btn" id="runBtn" data-i="run"></button><button class="btn ghost" id="demoBtn" type="button" data-i="demo"></button></div>`;
+}
+function applyLang(){
+  document.documentElement.lang = L; document.documentElement.dir = L==='ar' ? 'rtl' : 'ltr';
+  document.title = t('heroT1') + ' — TadreebPro.ai';
+  document.querySelectorAll('[data-i]').forEach(e => { e.textContent = t(e.dataset.i); });
+  document.querySelectorAll('[data-io]').forEach(e => { e.textContent = others(e.dataset.io); });
+  document.querySelectorAll('[data-ph]').forEach(e => { e.placeholder = t(e.dataset.ph); });
+  document.querySelectorAll('.langs button').forEach(b => b.classList.toggle('on', b.dataset.lang === L));
+  renderFiles();
+  if(S.report && !$('#reportView').classList.contains('hidden')) renderReport(false);
+  showResumeBox();
+  try { localStorage.setItem('tadreeb_lang', L); } catch(e){}
+}
+function setLang(l){ if(l===L) return; const old=L; L = l; applyLang(); translateIntake(old, l); if(S.report) translateReport(l); }
+/* ---- auto-translation of typed text when the language changes ---- */
+const TXT_FIELDS = ['f_client','f_activite','f_periode','f_notes'];
+const DEMO_KEYS = {f_activite:'demoAct', f_periode:'demoPer', f_notes:'demoNotes'};
+async function aiTranslate(obj, to){
+  const s = S.sample || S.pre; if(!s) throw Object.assign(new Error('no_ai'),{code:'no_ai'});
+  const prompt = `TASK_ID: translate
+Translate every value of this JSON object into ${({ar:'Modern Standard Arabic (الفصحى)',fr:'French',en:'English'})[to]}. Keep the same keys.
+Rules: professional Tunisian tax vocabulary; keep company names, brand names and codes unchanged (transliterate Arabic-script names into Latin letters for French/English); write all numbers with Western digits 0123456789 (like 12), never ١٢; do not add anything.
+Return the JSON object only.
+${JSON.stringify(obj)}`;
+  const r = await Promise.race([ s(prompt, {modelTier:'quick', cache:false}), sleep(60000).then(()=>{ throw new Error('timeout'); }) ]);
+  return parseJSON(r.text||'');
+}
+let trBusy = 0;
+async function translateIntake(from, to){
+  const msg = $('#trState'); const todo = {};
+  for(const id of TXT_FIELDS){
+    const el = $('#'+id); if(!el) continue; const v = el.value.trim(); if(!v) continue;
+    el._tr = el._tr && el._tr[from]===v ? el._tr : {[from]: v};
+    const dk = DEMO_KEYS[id]; const demoFrom = dk && LANGS.find(l => t(dk,l)===v);
+    if(demoFrom){ el.value = t(dk,to); el._tr = {[from]:v, [to]:el.value}; continue; }
+    if(el._tr[to]){ el.value = el._tr[to]; continue; }
+    todo[id] = v;
+  }
+  if(!Object.keys(todo).length) return;
+  if(!(S.sample || S.pre)){ if(msg) msg.textContent = t('transNA'); return; }
+  const my = ++trBusy; if(msg) msg.textContent = t('trans');
+  try {
+    const TA = ($('#f_anon')?.checked) ? makeAnon([...((($('#f_anon_names')?.value)||'').split(/\n|،|,/)), ($('#f_client')?.value||'')].map(x=>x.trim()).filter(Boolean)) : null;
+    const send = {}; for(const k in todo) send[k] = TA ? TA.text(todo[k]) : todo[k];
+    let out = await aiTranslate(send, to);
+    if(TA) for(const k in out) if(typeof out[k]==='string') for(const [c,v] of TA.rev) out[k] = out[k].split(c).join(v);
+    if(my!==trBusy || L!==to) return;
+    for(const id in todo){ const el=$('#'+id); if(el && typeof out[id]==='string' && el.value.trim()===todo[id]){ el.value = nd(out[id]); el._tr[to] = el.value; } }
+    if(msg){ msg.textContent = t('transOk'); setTimeout(()=>{ if(msg.textContent===t('transOk')) msg.textContent=''; }, 3000); }
+  } catch(e){ if(msg) msg.textContent = t('transErr'); }
+}
+function bindTranslateMemory(){ TXT_FIELDS.forEach(id => { const el=$('#'+id); if(el) el.addEventListener('input', () => { el._tr = {[L]: el.value.trim()}; }); }); }
+/* ---- auto-translation of the AI parts of the report ---- */
+const trReportBusy = {};
+async function translateReport(to){
+  if(!S.report || trReportBusy[to]) return; const RL=S.runLang; if(to===RL) return;
+  const job = {}; const put=(k,o)=>{ if(o && typeof o==='object' && o[RL] && !o[to]) job[k]=o[RL]; };
+  S.risks.forEach((r,i)=>{ put(`r${i}.short`,r.short); put(`r${i}.explication`,r.explication); put(`r${i}.impact`,r.impact); put(`r${i}.action`,r.action); put(`r${i}.docnote`,r.docnote); put(`r${i}.actnote`,r.actnote); put(`r${i}.base_legale`,r.base_legale); });
+  const R=S.report; (R.syn.plan_action||[]).forEach((p,i)=>put(`p${i}.action`,p.action)); put('msg',R.syn.message_client);
+  (R.pav[RL]||[]).forEach((x,i)=>{ if(!R.pav[to]) job[`pav${i}`]=x; }); (R.dm[RL]||[]).forEach((x,i)=>{ if(!R.dm[to]) job[`dm${i}`]=x; });
+  if(!Object.keys(job).length || !(S.sample||S.pre)) return;
+  trReportBusy[to]=true; const note=$('#dlMsg'); if(note) note.textContent=t('trans');
+  try {
+    const out = await aiTranslate(job, to);
+    const get = k => typeof out[k]==='string' ? nd(out[k]) : null;
+    S.risks.forEach((r,i)=>['short','explication','impact','action','docnote','actnote','base_legale'].forEach(f=>{ const v=get(`r${i}.${f}`); if(v && r[f] && typeof r[f]==='object') r[f][to]=v; }));
+    (R.syn.plan_action||[]).forEach((p,i)=>{ const v=get(`p${i}.action`); if(v && p.action && typeof p.action==='object') p.action[to]=v; });
+    const m=get('msg'); if(m && R.syn.message_client) R.syn.message_client[to]=m;
+    if(R.pav[RL]) R.pav[to]=R.pav[RL].map((x,i)=>get(`pav${i}`)||x); if(R.dm[RL]) R.dm[to]=R.dm[RL].map((x,i)=>get(`dm${i}`)||x);
+    saveCheckpoint();
+    if(L===to) renderReport(false);
+  } catch(e){ if(note) note.textContent=t('transErr'); }
+  trReportBusy[to]=false;
+}
+
+/* ---------- files ---------- */
+function guessType(name){
+  const n = name.toLowerCase();
+  if(/d[ée]cl|تصريح|declaration/.test(n)) return 'decl';
+  if(/vente|sales|بيع|client/.test(n)) return 'vente';
+  if(/achat|purchase|شراء|fournisseur/.test(n)) return 'achat';
+  if(/retenue|خصم|rs[_-]/.test(n)) return 'rs';
+  if(/grand|ledger|balance|bilan|أستاذ|ميزان/.test(n)) return 'gl';
+  if(/banque|bank|relev|بنك/.test(n)) return 'banque';
+  if(/contrat|عقد/.test(n)) return 'contrat';
+  return 'autre';
+}
+function addFiles(list){ for(const f of list){ if(S.files.some(x => x.file.name===f.name && x.file.size===f.size)) continue; S.files.push({file:f, type:guessType(f.name)}); } renderFiles(); }
+function renderFiles(){
+  const fl = $('#flist'); if(!fl) return;
+  fl.innerHTML = S.files.map((x,i) => `<div class="fitem"><div class="nm">${esc(x.file.name)} <small>· ${(x.file.size/1024).toFixed(0)} KB</small></div>
+    <select data-i2="${i}">${Object.keys(DOC_TYPES).map(k=>`<option value="${k}" ${k===x.type?'selected':''}>${esc(tx(DOC_TYPES[k]))}</option>`).join('')}</select>
+    <button data-del="${i}" title="${esc(t('delBtn'))}">✕</button></div>`).join('');
+  fl.querySelectorAll('select').forEach(s => s.onchange = e => S.files[+e.target.dataset.i2].type = e.target.value);
+  fl.querySelectorAll('[data-del]').forEach(b => b.onclick = e => { S.files.splice(+e.target.dataset.del,1); renderFiles(); });
+}
+function bindForm(){
+  const drop = $('#drop');
+  $('#pickBtn').onclick = () => $('#fileInput').click();
+  $('#fileInput').onchange = e => { addFiles(e.target.files); e.target.value=''; };
+  ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+  $('#demoBtn').onclick = fillDemo;
+  $('#runBtn').onclick = run;
+}
+function readIntake(){
+  const g = id => nd(($('#'+id)?.value || '').trim());
+  return {
+    client: g('f_client') || t('noClient'), forme: g('f_forme'), activite: g('f_activite'), regime: g('f_regime'),
+    periode: g('f_periode'), assujetti: g('f_assuj'), elfatoora_oblige: g('f_elfob'), mf: g('f_mf'), notes: g('f_notes'),
+    anon: !!$('#f_anon')?.checked, ocr: !!$('#f_ocr')?.checked, anonNames: (($('#f_anon_names')?.value)||'').split(/\n|،|,/).map(x=>x.trim()).filter(Boolean),
+    n: { ca_decl:num('n_ca_decl'), ca_compta:num('n_ca_compta'), taux:num('n_taux'), tvac_decl:num('n_tvac_decl'), tvac_fact:num('n_tvac_fact'),
+         tvad_decl:num('n_tvad_decl'), tvad_fact:num('n_tvad_fact'), credit:num('n_credit'), rs_dues:num('n_rs_dues'), rs_decl:num('n_rs_decl'),
+         rs_benef:num('n_rs_benef'), rs_cert:num('n_rs_cert'), fact_emises:num('n_fact_emises'), fact_elec:num('n_fact_elec'),
+         decl_dues:num('n_decl_dues'), decl_dep:num('n_decl_dep'), decl_retard:num('n_decl_retard'), timbre_nb:num('n_timbre_nb'),
+         timbre_tarif:num('n_timbre_tarif'), timbre_decl:num('n_timbre_decl'), especes:num('n_especes') }
+  };
+}
+
+/* ---------- demo data (fictitious) ---------- */
+const DEMO_TXT = `DOSSIER DE DÉMONSTRATION — DONNÉES FICTIVES — TadreebPro.ai
+Société : SARL ALPHA-DÉMO (fictive) — Commerce de gros de matériaux de construction
+Exercice : 2025
+
+=== DÉCLARATIONS MENSUELLES (extrait) ===
+Mois | Date de dépôt | CA HT déclaré | TVA collectée | TVA déductible | Retenues à la source versées
+Janvier 2025 | 14/02/2025 | 95 000 | 18 050 | 11 200 | 1 450
+Février 2025 | 15/03/2025 | 88 000 | 16 720 | 10 900 | 1 380
+Mars 2025 | 02/05/2025 | 102 000 | 19 380 | 12 750 | 1 520
+Avril 2025 | 14/05/2025 | 91 000 | 17 290 | 9 800 | 1 410
+Mai 2025 | NON DÉPOSÉE | — | — | — | —
+Juin 2025 | 28/07/2025 | 99 000 | 18 810 | 13 100 | 1 495
+
+=== JOURNAL DES VENTES (synthèse) ===
+Total CA HT facturé janvier–juin : 612 000 DT
+TVA facturée sur ventes janvier–juin : 116 280 DT
+Nombre de factures émises : 418 — dont 251 transmises via la plateforme ElFatoora (TTN)
+Ventes à l'export exonérées : 0 DT
+
+=== ACHATS ===
+TVA figurant sur factures d'achat conformes : 61 900 DT
+Facture n° F-2207 du fournisseur "Béta Équipements" : 14 200 DT HT, TVA 2 698 DT — facture sans matricule fiscal du fournisseur
+Achat véhicule de tourisme (usage direction) : TVA 9 120 DT déduite en mars 2025
+
+=== RETENUES À LA SOURCE ===
+Honoraires expert-comptable : 24 000 DT — retenue opérée
+Loyers du dépôt : 36 000 DT — aucune retenue opérée sur le loyer
+Nombre de bénéficiaires de paiements soumis à retenue : 9 — attestations délivrées : 5
+
+=== DIVERS ===
+Paiements en espèces fournisseurs : 3 règlements de 6 500 DT chacun (février 2025)
+Droit de timbre sur factures : déclaré 120 DT pour 418 factures
+`;
+function fillDemo(){
+  const set=(id,v)=>{ const el=$('#'+id); if(el) el.value=v; };
+  set('f_client','SARL ALPHA-DÉMO (fictive)'); set('f_activite', t('demoAct')); set('f_periode', t('demoPer'));
+  set('f_forme','sarl'); set('f_regime','reel'); set('f_assuj','oui'); set('f_elfob','oui');
+  set('n_ca_decl','475000'); set('n_ca_compta','612000'); set('n_taux','19'); set('n_tvac_decl','90250'); set('n_tvac_fact','116280');
+  set('n_tvad_decl','67750'); set('n_tvad_fact','61900'); set('n_credit','0'); set('n_rs_dues','9900'); set('n_rs_decl','7255');
+  set('n_rs_benef','9'); set('n_rs_cert','5'); set('n_fact_emises','418'); set('n_fact_elec','251'); set('n_decl_dues','6');
+  set('n_decl_dep','5'); set('n_decl_retard','3'); set('n_timbre_nb','418'); set('n_timbre_tarif',''); set('n_timbre_decl','120'); set('n_especes','19500');
+  set('f_notes', t('demoNotes'));
+  $('#f_consent').checked = true;
+  S.files = S.files.filter(x => !x.demo);
+  S.files.push({file:new File([DEMO_TXT], 'dossier_demo_2025.txt', {type:'text/plain'}), type:'gl', demo:true});
+  renderFiles();
+  window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'});
+}
+
+/* =====================================================================
+   Claude access
+   ===================================================================== */
+async function getSample(){
+  if(!(window.claude && typeof window.claude.use === 'function')) return null;
+  try { return await Promise.race([window.claude.use('sample'), sleep(10000).then(()=>null)]); } catch(e){ return null; }
+}
+function parseJSON(text){
+  if(!text) throw new Error('réponse vide');
+  let s = text.replace(/```json|```/g,'');
+  const a = s.indexOf('{'), b = s.lastIndexOf('}');
+  if(a<0||b<0) throw new Error('JSON introuvable');
+  return deepND(JSON.parse(s.slice(a,b+1)));
+}
+/* Claude calls: no fixed total timeout (long answers are fine) — a call is only abandoned
+   if it stays SILENT too long (no streamed text), so slow-but-working answers always complete. */
+const FIRST_TOKEN_MS = window.__CALL_TIMEOUT || 90000;   // waiting for the first words
+const IDLE_MS        = window.__CALL_TIMEOUT || 60000;    // silence while streaming
+const MAX_CALL_MS    = 8*60*1000;                          // absolute safety cap
+async function ask(prompt, {images=null, tier='default', label='claude'}={}){
+  if(!S.sample) throw Object.assign(new Error('no_ai'), {code:'no_ai'});
+  const waits = [4000, 12000];
+  for(let attempt=0; attempt<3; attempt++){
+    if(S.aborted) throw new Error('stopped');
+    const ctl = new AbortController(); S.ctls.add(ctl);
+    const t0 = performance.now(); let lastTok = 0, chars = 0, lastLog = 0, wd; S.callStart = t0; S.callLabel = label; S.skipReq = false;
+    const task = S.tstate[label] ? label : null;
+    const opts = {modelTier: tier, cache:false, signal: ctl.signal,
+      onText: ({text}) => { lastTok = performance.now(); chars = (text||'').length;
+        if(task && S.tstate[task]) S.tstate[task].real = Math.min(.95, .1 + chars/4000);
+        if(lastTok - lastLog > 6000){ lastLog = lastTok; log(`[${label}] réception… ${fmtL(chars,'fr')} car.`); } } };
+    if(images) opts.images = images;
+    try {
+      const r = await Promise.race([ S.sample(prompt, opts),
+        new Promise((_,rej)=>{ wd = setInterval(()=>{ const now=performance.now();
+          const silent = lastTok ? now-lastTok > IDLE_MS : now-t0 > FIRST_TOKEN_MS;
+          if(S.skipReq){ clearInterval(wd); try{ ctl.abort(); }catch(e){} rej(Object.assign(new Error('skipped'),{code:'skipped'})); return; }
+          if(silent || now-t0 > MAX_CALL_MS){ clearInterval(wd); try{ ctl.abort(); }catch(e){} rej(Object.assign(new Error('timeout'),{code:'timeout'})); } }, 1000); }) ]);
+      if(r && r.truncated) S.lastTrunc = true;
+      return (r && r.text) || '';
+    } catch(e){
+      const code = (e && (e.code || e.message)) || 'erreur';
+      if(S.aborted) throw new Error('stopped');
+      if(code==='not_granted'){ S.sample=null; $('#noAiNotice').classList.remove('hidden'); throw e; }
+      if(code==='skipped'){ throw e; }
+      if(code==='timeout' && attempt>=1){ throw e; }
+      if(attempt<2){ const w = code==='rate_limited' ? 15000 : waits[attempt]; log(`[${label}] ${code} — nouvel essai ${attempt+2}/3 dans ${w/1000}s`, 'e'); await sleep(w); continue; }
+      throw e;
+    } finally { clearInterval(wd); S.ctls.delete(ctl); S.callStart = 0; }
+  }
+}
+async function askJSON(prompt, o){
+  S.lastTrunc = false;
+  const txt = await ask(prompt, o);
+  try { return parseJSON(txt); }
+  catch(e){
+    if(S.lastTrunc){ log(`[${o?.label||'claude'}] réponse tronquée → version courte`, 'e');
+      return parseJSON(await ask(prompt + '\n\nمهمّ: أجب بإيجاز شديد (4 مخاطر كحدّ أقصى، كل شرح ≤ 50 كلمة) حتى لا ينقطع الردّ.', o)); }
+    log(`[${o?.label||'claude'}] JSON invalide → reformulation`, 'e');
+    const fix = await ask(`أعد كتابة المحتوى التالي ككائن JSON صالح فقط، دون أي نص قبله أو بعده ودون علامات markdown:\n\n${txt.slice(0,12000)}`, {...o, tier:'quick'});
+    return parseJSON(fix);
+  }
+}
+
+/* =====================================================================
+   Logging
+   ===================================================================== */
+function log(s, cls=''){
+  const c = $('#console'); const d = document.createElement('div'); if(cls) d.className=cls;
+  const tt = ((performance.now()-S.t0)/1000).toFixed(1).padStart(6,' ');
+  lastLogAt = performance.now(); d.textContent = `${tt}s  ${s}`; c.appendChild(d); while(c.children.length>60) c.firstChild.remove();
+}
+function alog(s){ const a=$('#alog'); const d=document.createElement('div'); d.textContent=s; a.appendChild(d); while(a.children.length>40) a.firstChild.remove(); }
+
+/* ---------- sound (Web Audio, started by the run click) ---------- */
+let AC=null, muted=false, drone=null, lastTick=0;
+function audioInit(){ try{ AC = AC || new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); }catch(e){ AC=null; } }
+function beep(f, d=.09, v=.05, type='sine', when=0){
+  if(!AC||muted) return; const t=AC.currentTime+when; const o=AC.createOscillator(), g=AC.createGain();
+  o.type=type; o.frequency.value=f; g.gain.setValueAtTime(v,t); g.gain.exponentialRampToValueAtTime(.0001,t+d); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t+d+.03);
+}
+function tick(){ const n=performance.now(); if(n-lastTick<45) return; lastTick=n; beep(1800+Math.random()*1400,.018,.018,'square'); }
+function sndDone(){ beep(1320,.13,.07); beep(1760,.13,.06,'sine',.07); }
+function sndChime(){ [784,1175,1568].forEach((f,i)=>beep(f,1.1,.06,'sine',i*.09)); }
+function whoosh(dur=.6, v=.12){
+  if(!AC||muted) return; const n=Math.floor(AC.sampleRate*dur), b=AC.createBuffer(1,n,AC.sampleRate), d=b.getChannelData(0);
+  for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*Math.sin(Math.PI*i/n)**2;
+  const s=AC.createBufferSource(), f=AC.createBiquadFilter(), g=AC.createGain(); s.buffer=b; f.type='bandpass'; f.Q.value=.8;
+  f.frequency.setValueAtTime(300,AC.currentTime); f.frequency.exponentialRampToValueAtTime(3000,AC.currentTime+dur); g.gain.value=v;
+  s.connect(f); f.connect(g); g.connect(AC.destination); s.start();
+}
+function droneOn(){ if(!AC||drone) return; const o1=AC.createOscillator(), o2=AC.createOscillator(), g=AC.createGain(); o1.frequency.value=55; o2.frequency.value=110.5; g.gain.value=muted?0:.025;
+  o1.connect(g); o2.connect(g); g.connect(AC.destination); o1.start(); o2.start(); drone={o1,o2,g}; }
+function droneOff(){ if(!drone) return; try{ drone.g.gain.setTargetAtTime(0,AC.currentTime,.3); drone.o1.stop(AC.currentTime+1.2); drone.o2.stop(AC.currentTime+1.2); }catch(e){} drone=null; }
+$('#muteBtn').onclick = () => { muted=!muted; $('#muteBtn').textContent = muted?'♪ off':'♪ son'; if(drone) drone.g.gain.value = muted?0:.025; };
+
+/* ---------- typing helpers ---------- */
+function typeInto(el, s, speed=22, sound=true){
+  if(el._iv) clearInterval(el._iv); let i=0; el.textContent='';
+  if(!s){ return; }
+  el._iv=setInterval(()=>{ el.textContent=s.slice(0,++i); if(sound) tick(); if(i>=s.length){ clearInterval(el._iv); el._iv=null; } }, speed);
+}
+const typeText = (el, s, speed=26) => new Promise(r => { typeInto(el, s, speed); const wait=()=>{ if(!el._iv) r(); else setTimeout(wait,40); }; wait(); });
+
+/* ---------- dashboard construction ---------- */
+function buildDash(){
+  $('#tasks').innerHTML = TASKS.map(tk => `<div class="pn task" id="tk_${tk.id}" data-st="queued"><div class="hd">${tk.t}<span class="st">queued</span></div>
+    <div class="bd"><div class="ar" data-i="tk.${tk.id}"></div><div class="rows"></div><div class="viz">${tk.id==='lecture'?'<div class="pages" id="pgGrid"></div>':'<div class="vscan">queued…</div>'}</div><div class="pbar"><i></i></div></div></div>`).join('');
+  $('#briefBox').innerHTML = '<div class="ok" style="color:#fff;font-weight:700">1 &nbsp;# audit.brief</div>' + [['lire les pièces','lecture'],['anonymiser','anon'],['rapprocher chiffres','coherence'],['5 contrôles fiscaux','timbre'],['rédiger le rapport','rapport']]
+    .map(([s,k],i)=>`<div data-k="${k}">${i+2} <u></u>${s}<em>todo</em></div>`).join('') + '<div id="briefCount" style="color:#fff;font-weight:700;margin-top:6px">&gt; 0 / 4 done</div>';
+  $('#meters').innerHTML = ['lecture','analyse','preuves','risques','rapport'].map(k=>`<div class="meter"><i>${k}</i><s id="m_${k}">${'<b></b>'.repeat(10)}</s></div>`).join('');
+  $('#wave').innerHTML = '<b></b>'.repeat(38);
+  $('#barc').innerHTML = '<b></b>'.repeat(64);
+  $('#console').innerHTML=''; $('#alog').innerHTML=''; $('#rkChips').innerHTML=''; $('#missionTxt').textContent='';
+  $('#rkBig').textContent='0'; $('#rkRight').textContent='0'; $('#progN').textContent='0'; $('#progPct').textContent='0%';
+  const words=['OK','.pdf','TVA','RS','.xlsx','ocr','ar','fr','212','96','1.7k','TTN','OK','p.12','DT','scan','348','41','timbre','✓'];
+  $('#tags').innerHTML = Array.from({length:26},(_,i)=>`<div class="tg" style="left:${10+Math.random()*150}px;top:${Math.random()*96}%">${words[i%words.length]}</div>`).join('');
+  [...$('#tags').children].forEach(t=>{ t._ph=Math.random()*10; t._sp=1.2+Math.random()*3; t._y=parseFloat(t.style.top); });
+  TASKS.forEach(tk => S.tstate[tk.id] = {st:'queued', p:0, start:0});
+}
+function stageGlitch(){ const st=$('#stage'); st.classList.remove('glitch'); void st.offsetWidth; st.classList.add('glitch'); }
+function setTask(id, st, extra={}){
+  const el = $('#tk_'+id); if(!el) return; const ts = S.tstate[id];
+  ts.st = st; if(st==='running'){ ts.start=performance.now(); ts.p=0; const v=el.querySelector('.vscan'); if(v) v.textContent='scanning ▒▒▒'; }
+  el.dataset.st = st;
+  el.querySelector('.st').textContent = st==='done' ? 'done' : st==='error' ? 'erreur' : st==='queued' ? 'queued' : '00%';
+  if(st==='done'||st==='error'){ ts.p=1; el.querySelector('.pbar i').style.width='100%'; el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+    if(st==='done') sndDone(); else beep(220,.25,.08,'sawtooth'); if(Math.random()<.6) stageGlitch(); }
+  if(extra.rows) setRows(id, extra.rows);
+  updateBrief(); updateProgress();
+}
+function setRows(id, rows){
+  const box=$('#tk_'+id+' .rows'); if(!box) return; const prev=box._v||{};
+  if(box.children.length!==rows.length || rows.some(([k],i)=>box.children[i]?.dataset.k!==k))
+    box.innerHTML = rows.map(([k])=>`<div class="kv" data-k="${esc(k)}"><i>${esc(k)}</i><b></b></div>`).join('');
+  rows.forEach(([k,v],i)=>{ const b=box.children[i].querySelector('b'); b.title=v; if(prev[k]!==v || !b.textContent) { if(prev[k]===v) b.textContent=v; else typeInto(b, String(v), 24); } });
+  box._v=Object.fromEntries(rows);
+}
+function setTaskProgress(id, p){ const ts=S.tstate[id]; ts.real = p; }
+const SEVTAG = {eleve:['high',''], moyen:['med','m'], faible:['low','l']};
+function addChips(id, risks){
+  const v=$('#tk_'+id+' .viz'); if(!v || id==='lecture') return;
+  const order=['eleve','moyen','faible']; const L=[...risks].filter((r,i,a)=>a.indexOf(r)===i).sort((a,b)=>order.indexOf(a.gravite)-order.indexOf(b.gravite)).slice(0,5);
+  v.innerHTML = L.length ? L.map((r,i)=>`<div class="vl"><b>${String(i+1).padStart(2,'0')}</b><span>${esc(tx(r.short)||tx(r.titre))}</span><em class="${SEVTAG[r.gravite][1]}">${SEVTAG[r.gravite][0]}</em></div>`).join('')
+                         : '<div class="vscan">aucun risque détecté</div>';
+}
+function updateBrief(){
+  const done = k => S.tstate[k] && (S.tstate[k].st==='done'||S.tstate[k].st==='error');
+  let n=0; $('#briefBox').querySelectorAll('div[data-k]').forEach(d => { const ok=done(d.dataset.k); n+=ok; d.classList.toggle('ok', ok); d.querySelector('u').textContent = ok?'✓':''; d.querySelector('em').textContent = ok?'done':'todo'; });
+  const c=$('#briefCount'); if(c) c.textContent = `> ${n} / 5 done`;
+}
+function nDone(){ return TASKS.filter(t => ['done','error'].includes(S.tstate[t.id]?.st)).length; }
+function updateProgress(){ const n=nDone(); $('#progN').textContent=n; $('#progPct').textContent=Math.round(n/9*100)+'%'; }
+function meter(k, v){ const s=$('#m_'+k); if(!s) return; [...s.children].forEach((b,i)=>b.classList.toggle('on', i < Math.round(v*10))); }
+function updateRisksPanel(){
+  const n = S.risks.length; if(String(n)!==$('#rkBig').textContent){ $('#rkBig').textContent=n; $('#rkRight').textContent=`${n}`; beep(990,.07,.05,'triangle'); }
+  const order = ['eleve','moyen','faible'];
+  $('#rkChips').innerHTML = [...S.risks].sort((a,b)=>order.indexOf(a.gravite)-order.indexOf(b.gravite)).slice(0,12)
+    .map(r=>`<span class="chip ${SEV[r.gravite].c}">${esc(tx(r.short)||tx(r.titre))} !</span>`).join('');
+  meter('risques', Math.min(1, n/10));
+}
+function updatePages(){
+  $('#pgRead').textContent = String(S.pagesRead).padStart(2,'0'); $('#pgTot').textContent = `/ ${S.pagesTotal} pages`;
+  const f = S.pagesTotal ? S.pagesRead/S.pagesTotal : 0; meter('lecture', f);
+  [...$('#barc').children].forEach((b,i)=>b.classList.toggle('on', i/64 < f));
+}
+function pageCell(state){ const g=$('#pgGrid'); if(!g || g.children.length>=84) return; const s=document.createElement('s'); s.className=state; g.appendChild(s); tick(); }
+
+/* ---------- stage scaling (the 1080px stage is scaled to the screen like the video) ---------- */
+function fitStage(){
+  const wrap=$('#stageWrap'), st=$('#stage'); if(!wrap || $('#dashView').classList.contains('hidden')) return;
+  const s=Math.min(wrap.clientWidth/1080, 1.25);
+  st.style.setProperty('--sc', `scale(${s})`);
+  st.style.marginLeft = Math.max(0,(wrap.clientWidth-1080*s)/2)+'px';
+  wrap.style.height = Math.ceil(st.offsetHeight*s)+'px';
+}
+
+/* ---------- animation: wires + particles + floating tags ---------- */
+let wires=[], parts=[], dashH=0;
+const NODE_X = 290+111;
+function rel(el){ const d=$('#dash'); let x=0,y=0,e=el; while(e && e!==d){ x+=e.offsetLeft; y+=e.offsetTop; e=e.offsetParent; } return {x,y,w:el.offsetWidth,h:el.offsetHeight}; }
+function layoutWires(){
+  const cv=$('#wires'), dash=$('#dash'); const W=dash.offsetWidth, H=dash.offsetHeight; dashH=H;
+  cv.width=W; cv.height=H; cv.style.width=W+'px'; cv.style.height=H+'px'; wires=[]; parts=[];
+  let seed=7; const rnd=()=>{ seed=(seed*9301+49297)%233280; return seed/233280; };
+  [...document.querySelectorAll('.left .pn')].forEach((p,li)=>{ const r=rel(p); for(let k=0;k<5;k++){ const y=r.y+40+k*(r.h-50)/4;
+    for(let j=0;j<3;j++){ const ny=10+rnd()*(H-20); wires.push({a:[r.x+r.w,y],b:[NODE_X,ny],c1:[r.x+r.w+40+rnd()*50,y],c2:[NODE_X-30-rnd()*50,ny],owner:'L'+li}); } } });
+  [...document.querySelectorAll('.task')].forEach((p,ti)=>{ const r=rel(p); const id=p.id.slice(3); const col2 = ti%2===1;
+    for(let k=0;k<4;k++){ const y=r.y+64+k*30; for(let j=0;j<(col2?3:5);j++){ const ny=10+rnd()*(H-20);
+      wires.push(col2 ? {a:[NODE_X,ny],b:[r.x,y],c1:[NODE_X+80,ny],c2:[r.x-8,r.y+rnd()*12-6],owner:id}
+                      : {a:[NODE_X,ny],b:[r.x,y],c1:[NODE_X+40+rnd()*50,ny],c2:[r.x-30-rnd()*40,y],owner:id}); } } });
+  for(let i=0;i<(innerWidth<700?110:200);i++) parts.push({w:Math.floor(rnd()*wires.length), u:rnd(), sp:.25+rnd()*.45});
+}
+const GSTOPS=[[106,60,246],[214,47,156],[244,121,58]];
+function gradCol(u){ const k=u<.5?0:1, f=u<.5?u*2:(u-.5)*2, A=GSTOPS[k], B=GSTOPS[k+1]; return `rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*f)).join(',')})`; }
+function bz(w,u){ const v=1-u; return [v*v*v*w.a[0]+3*v*v*u*w.c1[0]+3*v*u*u*w.c2[0]+u*u*u*w.b[0], v*v*v*w.a[1]+3*v*v*u*w.c1[1]+3*v*u*u*w.c2[1]+u*u*u*w.b[1]]; }
+let lastT=0, lastFit=0;
+let lastDraw=0;
+function frame(t){
+  if(document.hidden || t-lastDraw < 33){ requestAnimationFrame(frame); return; }
+  lastDraw=t;
+  const dt = Math.min(.07,(t-lastT)/1000); lastT=t;
+  if(!$('#dashView').classList.contains('hidden')){
+    if(t-lastFit>400){ lastFit=t; fitStage(); if(Math.abs($('#dash').offsetHeight-dashH)>4) layoutWires(); }
+    const cv=$('#wires'), g=cv.getContext('2d');
+    if(cv.width && wires.length){
+      g.clearRect(0,0,cv.width,cv.height);
+      const act = o => o[0]==='L' ? ((Math.floor(t/400)+(+o.slice(1)))%5===0) : (S.tstate[o]?.st==='running');
+      for(const w of wires){ const a=act(w.owner); g.strokeStyle = a?'rgba(214,47,156,.85)':'rgba(255,255,255,.15)'; g.lineWidth=a?2:1;
+        g.beginPath(); g.moveTo(...w.a); g.bezierCurveTo(...w.c1,...w.c2,...w.b); g.stroke(); }
+      g.fillStyle='#1e1e1e'; g.fillRect(NODE_X-3,0,6,cv.height);
+      g.fillStyle='#565656'; g.font='10px JetBrains Mono';
+      for(let y=8,k=0;y<cv.height;y+=18,k++){ g.fillRect(NODE_X-6,y,12,1); if(k%3===0){ g.fillStyle='#4a4a4a'; g.fillText(`-${100+k}-`,NODE_X+10,y+3); g.fillStyle='#565656'; } }
+      g.fillStyle='#9a9a9a'; g.fillRect(NODE_X-14,0,28,8);
+      for(const p of parts){ const w=wires[p.w]; const a=act(w.owner); p.u=(p.u+dt*p.sp*(a?2.4:1))%1; const [x,y]=bz(w,p.u);
+        const pc = a ? gradCol(p.u) : '#fff'; g.fillStyle=pc; if(a){ g.globalAlpha=.25; g.beginPath(); g.arc(x,y,7,0,7); g.fill(); g.globalAlpha=1; } g.beginPath(); g.arc(x,y,a?3.2:2,0,7); g.fill(); }
+    }
+    const ts=t/1000; for(const tg of $('#tags').children){ const on=Math.sin(ts*tg._sp+tg._ph)>-.2; tg.style.visibility=on?'visible':'hidden'; tg.style.top=`calc(${tg._y}% + ${Math.sin(ts*.7+tg._ph)*8}px)`; }
+    for(const tk of TASKS){ const st=S.tstate[tk.id]; if(st?.st!=='running') continue;
+      const el=(performance.now()-st.start)/1000; const sim=1-Math.exp(-el/18); const p=Math.min(.95, Math.max(st.real||0, sim*.9));
+      st.p=p; const e=$('#tk_'+tk.id); e.querySelector('.pbar i').style.width=(p*100).toFixed(1)+'%'; e.querySelector('.st').textContent=String(Math.floor(p*100)).padStart(2,'0')+'%';
+      const v=e.querySelector('.vscan'); if(v) v.textContent='scanning '+'▒'.repeat(1+Math.floor(ts*6)%8); }
+    const running = TASKS.some(tk=>S.tstate[tk.id]?.st==='running');
+    [...$('#wave').children].forEach((b,i)=>{ b.style.height=(6+(running?50:8)*Math.abs(Math.sin(i*1.7+t/150)))+'px'; b.style.background=i%9===0?gradCol((i%27)/27):'#ddd'; });
+    if(S.t0 && (running || !S.report)){ const el=(performance.now()-S.t0)/1000; $('#elapsed').textContent = Math.round(el)+'s';
+      $('#sessLine').textContent = `${S.sess} · ${el.toFixed(2).padStart(6,'0')}s · 9 tâches · ${S.risks.length} risque(s)`; }
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+window.addEventListener('resize', () => { if(!$('#dashView').classList.contains('hidden')){ fitStage(); layoutWires(); } });
+
+function typeMission(txt){ typeInto($('#missionTxt'), txt, 24); }
+function toast(s){ const t=$('#toast'); t.textContent=s; t.style.display='block'; setTimeout(()=>t.style.display='none', 4500); }
+
+/* ---------- intro & outro (as in the video) ---------- */
+function ovGlitch(el){ el.classList.remove('glitch'); void el.offsetWidth; el.classList.add('glitch'); }
+async function playIntro(){
+  const ov=$('#intro'); ['#inT','#inS1','#inS2','#inS3'].forEach(s=>$(s).textContent=''); $('#inBar').style.width='0';
+  ov.classList.remove('hidden'); whoosh(.7,.14);
+  await sleep(150); $('#inBar').style.width='min(760px,80vw)';
+  await sleep(300); ovGlitch(ov);
+  $('#intro').dir = L==='ar'?'rtl':'ltr';
+  await typeText($('#inT'), t('heroT1'), 70);
+  ovGlitch(ov);
+  await typeText($('#inS1'), t('introS1'), 30);
+  const ol = LANGS.filter(x=>x!==L);
+  await typeText($('#inS2'), t('tagline', ol[0]), 18);
+  await typeText($('#inS3'), t('tagline', ol[1]), 18);
+  await sleep(450); whoosh(.5,.16); ovGlitch(ov); await sleep(220);
+  ov.classList.add('hidden');
+}
+function showOutro(){
+  return new Promise(res=>{
+    const ov=$('#outro'); $('#ouDone').textContent = t('auditDone').replace('{n}', S.risks.length).replace('{s}', S.report.score);
+    ov.classList.remove('hidden'); ov.scrollTop=0; ovGlitch(ov); whoosh(.6,.14); sndChime();
+    [...ov.querySelectorAll('.fade')].forEach((e,i)=>{ e.classList.remove('on'); setTimeout(()=>e.classList.add('on'), 150+i*170); });
+    let done=false; const close=()=>{ if(done) return; done=true; ovGlitch(ov); setTimeout(()=>{ ov.classList.add('hidden'); res(); }, 200); };
+    $('#ouBtn').onclick = close; setTimeout(close, 9000);
+  });
+}
+
+/* =====================================================================
+   1) LECTURE — extract text from every file
+   ===================================================================== */
+const OCR_CAP = 30;
+async function blobFromCanvas(c){ return await new Promise(r => c.toBlob(r, 'image/jpeg', .82)); }
+async function ocr(blob, label){
+  if(S.intake && S.intake.ocr===false){ S.ocrSkipped++; log(`[ocr] ${label}: ${t('ocrOff','fr')}`); return null; }
+  if(!S.sample || !S.imagesOK || S.ocrPages >= OCR_CAP){ S.ocrSkipped++; return null; }
+  S.ocrPages++;
+  const p = `TASK_ID: ocr
+أنت ناسخ وثائق محاسبية وجبائية تونسية. انسخ كل النص الظاهر في الصورة حرفياً وبلغته الأصلية (عربية أو فرنسية)، بالترتيب من أعلى إلى أسفل.
+- الجداول: سطر لكل صف، والخانات مفصولة بـ |
+- الأرقام والتواريخ والمعرّفات تُنسخ كما هي تماماً دون تصحيح.
+- لا تضف أي تعليق أو شرح.
+- إن كان جزء غير مقروء اكتب [غير مقروء] في مكانه. إن كانت الصورة كلها غير مقروءة اكتب فقط: [غير مقروء]`;
+  try { return nd(await ask(p, {images:[blob], tier:'quick', label:'ocr '+label})); }
+  catch(e){ S.aiErrors++; log(`[ocr] ${label}: ${e.message||e.code}`, 'e'); return null; }
+}
+async function extractFile(x){
+  const f = x.file, name = f.name, ext = name.split('.').pop().toLowerCase();
+  const doc = {name, type:x.type, pages:[], kind:ext, notes:[]};
+  if(ext==='pdf'){
+    if(!window.pdfjsLib){ doc.notes.push('pdf.js indisponible'); return doc; }
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+    const pdf = await pdfjsLib.getDocument({data: new Uint8Array(await f.arrayBuffer())}).promise;
+    for(let i=1;i<=pdf.numPages;i++){
+      if(S.aborted) break;
+      const page = await pdf.getPage(i); const tc = await page.getTextContent();
+      let lines=[], lastY=null, cur='';
+      for(const it of tc.items){ const y=Math.round(it.transform[5]); if(lastY!==null && Math.abs(y-lastY)>3){ lines.push(cur); cur=''; } cur += (cur && !cur.endsWith(' ')?' ':'') + it.str; lastY=y; }
+      lines.push(cur); let text = lines.join('\n').trim(); let st='r';
+      if(text.replace(/\s/g,'').length < 40){
+        const vp = page.getViewport({scale:1.7}); const c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height;
+        await page.render({canvasContext:c.getContext('2d'), viewport:vp}).promise;
+        alog(`ocr ${name} p.${i}`);
+        const o = await ocr(await blobFromCanvas(c), `${name} p.${i}`);
+        if(o){ text=o; st='o'; } else { st='x'; doc.notes.push(`page ${i} scannée non lue`); }
+      }
+      doc.pages.push({n:i, text, ocr:st==='o'}); S.pagesRead++; pageCell(st); updatePages();
+      log(`[read] ${name} p.${i}/${pdf.numPages} ${st==='o'?'(ocr)':st==='x'?'(non lue)':''} ${text.length} car.`);
+    }
+  } else if(['png','jpg','jpeg','webp'].includes(ext)){
+    alog(`ocr ${name}`);
+    const o = await ocr(f, name);
+    doc.pages.push({n:1, text:o||'', ocr:!!o}); if(!o) doc.notes.push('image non lue (vision indisponible ou plafond atteint)');
+    S.pagesRead++; pageCell(o?'o':'x'); updatePages(); log(`[read] ${name} ${o?'ocr ok':'non lue'}`);
+  } else if(['xlsx','xls','csv'].includes(ext)){
+    if(!window.XLSX){ doc.notes.push('lecteur Excel indisponible'); return doc; }
+    const wb = ext==='csv' ? XLSX.read(await f.text(), {type:'string'}) : XLSX.read(await f.arrayBuffer(), {type:'array'});
+    wb.SheetNames.forEach((sn,i)=>{ const csv = XLSX.utils.sheet_to_csv(wb.Sheets[sn], {FS:' | '}); doc.pages.push({n:i+1, text:`[Feuille: ${sn}]\n`+csv, ocr:false}); S.pagesRead++; pageCell('r'); updatePages(); log(`[read] ${name} feuille "${sn}" ${csv.split('\n').length} lignes`); });
+  } else if(ext==='docx'){
+    if(!window.mammoth){ doc.notes.push('lecteur Word indisponible'); return doc; }
+    const r = await mammoth.extractRawText({arrayBuffer: await f.arrayBuffer()});
+    doc.pages.push({n:1, text:r.value, ocr:false}); S.pagesRead++; pageCell('r'); updatePages(); log(`[read] ${name} ${r.value.length} car.`);
+  } else {
+    const tt = nd(await f.text()); doc.pages.push({n:1, text:tt, ocr:false}); S.pagesRead++; pageCell('r'); updatePages(); log(`[read] ${name} ${tt.length} car.`);
+  }
+  return doc;
+}
+async function countPages(x){
+  const ext = x.file.name.split('.').pop().toLowerCase();
+  try{
+    if(ext==='pdf' && window.pdfjsLib){ pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js'; const pdf=await pdfjsLib.getDocument({data:new Uint8Array(await x.file.arrayBuffer())}).promise; return pdf.numPages; }
+    if(['xlsx','xls'].includes(ext) && window.XLSX){ return XLSX.read(await x.file.arrayBuffer(),{type:'array',bookSheets:true}).SheetNames.length; }
+  }catch(e){}
+  return 1;
+}
+async function doLecture(){
+  S.pagesTotal = 0;
+  for(const x of S.files) S.pagesTotal += await countPages(x);
+  updatePages();
+  setRows('lecture', [['fichiers', String(S.files.length)], ['pages', `0 / ${S.pagesTotal}`], ['ocr', S.imagesOK?'vision ar+fr':'—']]);
+  for(const x of S.files){
+    if(S.aborted) return;
+    alog(`open ${x.file.name}`);
+    try { const d = await extractFile(x); S.docs.push(d); }
+    catch(e){ log(`[read] ${x.file.name}: ${e.message}`, 'e'); S.docs.push({name:x.file.name, type:x.type, pages:[], notes:['lecture impossible: '+e.message]}); }
+    setTaskProgress('lecture', S.pagesRead/Math.max(1,S.pagesTotal));
+    setRows('lecture', [['fichiers', `${S.docs.length} / ${S.files.length}`], ['pages', `${S.pagesRead} / ${S.pagesTotal}`], ['ocr', `${S.ocrPages} p.`], ['non lues', String(S.ocrSkipped)]]);
+  }
+  const chars = S.docs.reduce((a,d)=>a+d.pages.reduce((b,p)=>b+(p.text||'').length,0),0);
+  setRows('lecture', [['fichiers', `${S.docs.length} / ${S.files.length}`], ['pages', `${S.pagesRead} / ${S.pagesTotal}`], ['ocr', `${S.ocrPages} p.`], ['texte', `${fmtL(chars,'fr')} car.`]]);
+  $('#dosRight').textContent = `${S.files.length} files`;
+}
+
+
+/* =====================================================================
+   ANONYMISATION — runs on the user's device, BEFORE anything is sent to Claude.
+   Personal data are replaced by stable codes ([NOM-1], [MF-1]…); the table
+   code → original never leaves the device (used only to re-show the report locally).
+   ===================================================================== */
+function makeAnon(extraNames=[]){
+  const fwd = new Map(), rev = new Map(), cnt = {}, stats = {};
+  const norm = v => v.replace(/\s+/g,' ').trim().toLowerCase();
+  const tok = (kind, value) => {
+    const v = value.trim(); if(!v) return value; const key = kind+'|'+norm(v);
+    if(!fwd.has(key)){ cnt[kind]=(cnt[kind]||0)+1; const code=`[${kind}-${cnt[kind]}]`; fwd.set(key, code); rev.set(code, v); }
+    stats[kind]=(stats[kind]||0)+1; return fwd.get(key);
+  };
+  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const names = extraNames.map(s=>s.trim()).filter(s=>s.length>=3).sort((a,b)=>b.length-a.length);
+  const ctx = (re, kws) => line => kws.test(line) ? line.replace(re, m => tok(re._k, m)) : line;
+  const CIN_LINE = /(\bcin\b|c\.i\.n|carte d.identit|identity card|بطاقة التعريف|ب\.ت\.و|passeport|passport|جواز)/i;
+  const TEL_LINE = /(t[ée]l|phone|gsm|mobile|portable|whats ?app|fax|هاتف|جوال|الهاتف)/i;
+  const MF_LINE  = /(matricule|m\.f\b|\bmf\b|identifiant fiscal|tax id|المعرف الجبائي|المعرّف الجبائي)/i;
+  function text(s){
+    if(!s) return s;
+    for(const n of names) s = s.replace(new RegExp(esc(n),'gi'), m => tok('NOM', m));
+    s = s.replace(/[\w.+-]+@[\w-]+\.[\w.-]+/g, m => tok('EMAIL', m));
+    s = s.replace(/\bTN\s?\d{2}(?:\s?\d){20}\b/gi, m => tok('IBAN', m));
+    s = s.replace(/\b\d{2}\s?\d{3}\s?\d{13}\s?\d{2}\b/g, m => tok('RIB', m));
+    s = s.replace(/\b\d{20}\b/g, m => tok('RIB', m));
+    s = s.replace(/\b(?:\d{4}[ -]?){3}\d{4}\b/g, m => tok('CARTE', m));
+    s = s.replace(/\b\d{6,7}\s?[A-Z]\s?[\/ ]?\s?[A-Z]\s?[\/ ]?\s?[A-Z]\s?[\/ ]?\s?\d{3}\b/g, m => tok('MF', m));
+    s = s.replace(/\b\d{7}[A-Z]\b/g, m => tok('MF', m));
+    s = s.replace(/(?:\+|00)216[\s.-]?\d{2}[\s.-]?\d{3}[\s.-]?\d{3}/g, m => tok('TEL', m));
+    s = s.split('\n').map(line => {
+      if(TEL_LINE.test(line)) line = line.replace(/\b\d{2}[\s.]?\d{3}[\s.]?\d{3}\b/g, m => tok('TEL', m));
+      if(CIN_LINE.test(line)) line = line.replace(/\b\d{8}\b/g, m => tok('CIN', m)).replace(/\b[A-Z]\d{6,8}\b/g, m => tok('CIN', m));
+      if(MF_LINE.test(line))  line = line.replace(/([:：]\s*)([0-9A-Z][0-9A-Z\/.-]{5,20})/g, (m,a,b) => a + tok('MF', b));
+      line = line.replace(/((?:adresse|domicile|si[èe]ge social|address|العنوان|عنوان|المقر)\s*[:：]\s*)(.+)$/i, (m,a,b) => a + tok('ADRESSE', b));
+      line = line.replace(/((?:g[ée]rante?|nom(?: et pr[ée]nom)?|pr[ée]nom|repr[ée]sentant l[ée]gal|dirigeant|b[ée]n[ée]ficiaire|associ[ée]e?|name|manager)\s*[:：]\s*)([^\n|,;:\[—–]{2,40})/gi, (m,a,b) => a + tok('NOM', b));
+      line = line.replace(/((?:المسير|المسيّر|المسيرة|الاسم واللقب|الاسم|اللقب|الممثل القانوني|المستفيد|الشريك)\s*[:：]\s*)([^\n|،,؛:\[—–]{2,40})/g, (m,a,b) => a + tok('NOM', b));
+      return line;
+    }).join('\n');
+    s = s.replace(/\b(M\.|Mr\.?|Mme|Mlle|Monsieur|Madame|Mademoiselle)\s+([A-ZÀ-Ý][\wÀ-ÿ'’-]+(?:\s+[A-ZÀ-Ý][\wÀ-ÿ'’-]+){0,2})/g, (m,a,b) => a+' '+tok('NOM', b));
+    s = s.replace(/(السيد|السيدة|الآنسة)\s+([ء-ي]+(?:\s+[ء-ي]+){0,2})/g, (m,a,b) => a+' '+tok('NOM', b));
+    return s;
+  }
+  return {text, tok, rev, stats, total: () => Object.values(stats).reduce((a,b)=>a+b,0)};
+}
+const ANON_NOTE = `ملاحظة: المعطيات الشخصية في هذا الملف استُبدلت برموز مثل [NOM-1] و[MF-1] و[CIN-1] و[RIB-1] و[CLIENT-1] و[DOC-1]. استعمل هذه الرموز كما هي في إجابتك، ولا تحاول تخمين ما وراءها.`;
+const maskPrev = v => v.length<=2 ? '••' : v.slice(0,2) + '•'.repeat(Math.min(8, v.length-2));
+
+async function doAnon(){
+  const I = S.intake;
+  if(!I.anon){ setRows('anon', [['statut','désactivé'], ['envoi','texte brut']]); log('[anon] désactivée par l’utilisateur', 'e'); return; }
+  const A = makeAnon([...(I.anonNames||[]), ...(I.client ? [I.client] : [])].filter(Boolean));
+  // client name gets its own code
+  I.aiClient = I.client ? A.tok('CLIENT', I.client) : '';
+  I.aiNotes = A.text(I.notes||''); I.aiActivite = A.text(I.activite||'');
+  let pages = 0;
+  S.docs.forEach((d, i) => {
+    d.aiName = `DOC-${i+1}.${(d.name.split('.').pop()||'txt').toLowerCase()}`; A.rev.set(d.aiName, d.name);
+    for(const p of d.pages){ p.text = A.text(p.text||''); pages++; }
+    setTaskProgress('anon', (i+1)/Math.max(1,S.docs.length));
+  });
+  S.anonRev = Object.fromEntries(A.rev); S.anonStats = {...A.stats};
+  const st = A.stats, sum = k => k.reduce((a,x)=>a+(st[x]||0),0);
+  setRows('anon', [['noms', String(sum(['NOM','CLIENT']))], ['identifiants', String(sum(['MF','CIN']))], ['comptes', String(sum(['RIB','IBAN','CARTE']))],
+                   ['contacts', String(sum(['TEL','EMAIL','ADRESSE']))]]);
+  const v = $('#tk_anon .viz'); if(v){ const ex = [...A.rev.entries()].filter(([k])=>!k.startsWith('DOC-')).slice(0,5);
+    v.innerHTML = ex.length ? ex.map(([k,o])=>`<div class="vl"><b>${esc(k)}</b><span style="direction:ltr;text-align:right">${esc(maskPrev(o))}</span><em class="l">local</em></div>`).join('') : '<div class="vscan">aucune donnée personnelle détectée</div>'; }
+  log(`[anon] ${A.total()} élément(s) masqué(s) sur ${pages} page(s) — la table de correspondance reste sur l’appareil`);
+  alog(`anon ${A.total()} codes`);
+}
+/* re-show originals in the report, locally only */
+function reid(html){
+  if(!S.showReal || !S.anonRev) return html;
+  for(const [k,v] of Object.entries(S.anonRev)){ html = html.split(k).join(esc(v)); }
+  return html;
+}
+
+/* =====================================================================
+   Rules engine (deterministic arithmetic on intake figures) — trilingual
+   ===================================================================== */
+function sevGap(gap, base){ const a=Math.abs(gap), r = base ? a/Math.abs(base) : 1; if(a>=1000 || r>=.05) return 'eleve'; if(a>=200 || r>=.01) return 'moyen'; return 'faible'; }
+const M3 = n => ({ar:money(n,'ar'), fr:money(n,'fr'), en:money(n,'en')});
+const F3 = n => ({ar:fmtL(n,'ar'), fr:fmtL(n,'fr'), en:fmtL(n,'en')});
+function computeRules(I){
+  const n=I.n, R=[];
+  const add = o => R.push({source:'rule', certitude:'confirme', preuves:[{document:I18N.formSrc, page:'—', extrait:o.calc}], ...o});
+  const by = f => ({ar:f('ar'), fr:f('fr'), en:f('en')});
+  if(n.tvac_decl!=null && n.tvac_fact!=null){ const g=n.tvac_fact-n.tvac_decl; if(g>0.5){ const a=M3(n.tvac_fact), b=M3(n.tvac_decl), c=M3(g); add({id:'R_TVA_COLL', task:'tva', gravite:sevGap(g,n.tvac_fact),
+    short:T3('نقص تصريح TVA','TVA sous-déclarée','Under-declared VAT'),
+    titre:T3('الأداء المُحصّل المصرّح به أقلّ من الأداء المفوتر','TVA collectée déclarée inférieure à la TVA facturée','Output VAT declared is lower than VAT invoiced'),
+    explication:by(l=>({ar:`الأداء على القيمة المضافة الوارد بفواتير البيع (${a.ar}) يفوق ما وقع التصريح به (${b.ar}) بفارق ${c.ar}. يمثّل هذا نقصاً في التصريح ما لم يُبرَّر (فواتير ملغاة، تسبقات، فوارق توقيت).`,
+      fr:`La TVA figurant sur les factures de vente (${a.fr}) dépasse la TVA déclarée (${b.fr}) de ${c.fr}. Il s'agit d'une sous-déclaration, sauf justification (factures annulées, avances, décalages de période).`,
+      en:`VAT shown on sales invoices (${a.en}) exceeds VAT declared (${b.en}) by ${c.en}. This is under-declaration unless explained (cancelled invoices, advances, timing differences).`})[l]),
+    impact:T3(`أداء غير مصرّح به بقيمة ${c.ar} قابل للتعديل مع خطايا التأخير.`,`${c.fr} de TVA non déclarée, exposée à redressement et pénalités de retard.`,`${c.en} of undeclared VAT, exposed to reassessment and late-payment penalties.`),
+    action:T3('مطابقة دفتر المبيعات شهرياً مع التصاريح، وتحديد أشهر الفارق، وإعداد تصريح تعديلي إن تأكّد النقص.','Rapprocher mensuellement le journal des ventes et les déclarations, isoler les mois en écart et déposer une déclaration rectificative si le manque est confirmé.','Reconcile the sales journal with the returns month by month, isolate the months with gaps, and file a corrective return if confirmed.'),
+    calc:`${fmtL(n.tvac_fact,'fr')} − ${fmtL(n.tvac_decl,'fr')} = ${fmtL(g,'fr')}`}); } }
+  if(n.ca_decl && n.tvac_decl!=null && n.taux){ const impl=(n.tvac_decl/n.ca_decl*100), d=impl-n.taux; if(Math.abs(d)>1.5){ const i=impl.toFixed(2), dd=d.toFixed(2);
+    add({id:'R_TVA_TAUX', task:'tva', gravite:Math.abs(d)>4?'moyen':'faible', certitude:'probable',
+    short:T3('نسبة TVA غير متناسقة','Taux TVA incohérent','Inconsistent VAT rate'),
+    titre:T3('النسبة الضمنية للأداء لا تتطابق مع النسبة المطبّقة','Taux implicite de TVA incohérent avec le taux appliqué','Implied VAT rate does not match the rate applied'),
+    explication:T3(`النسبة المستخلصة من التصاريح (${i}%) تختلف عن النسبة الأساسية المعلنة (${n.taux}%) بفارق ${dd} نقطة. قد يُفسَّر ذلك بتعدّد النسب أو بعمليات معفاة أو بأخطاء احتساب.`,
+      `Le taux déduit des déclarations (${i} %) s'écarte du taux principal indiqué (${n.taux} %) de ${dd} point(s) : taux multiples, opérations exonérées ou erreurs de calcul possibles.`,
+      `The rate implied by the returns (${i}%) differs from the stated main rate (${n.taux}%) by ${dd} point(s): multiple rates, exempt sales or calculation errors may explain it.`),
+    impact:T3('خطر إعادة تصنيف عمليات أو تطبيق نسبة خاطئة.',"Risque de requalification d'opérations ou de taux erroné.",'Risk of operations being reclassified or a wrong rate applied.'),
+    action:T3('تفصيل رقم المعاملات حسب النسب والعمليات المعفاة وتوثيق سند كل نسبة.','Ventiler le CA par taux et par opérations exonérées, et documenter la base de chaque taux.','Break turnover down by rate and exempt operations, and document the basis for each rate.'),
+    calc:`${fmtL(n.tvac_decl,'fr')} / ${fmtL(n.ca_decl,'fr')} = ${i}%`}); } }
+  if(n.tvad_decl!=null && n.tvad_fact!=null){ const g=n.tvad_decl-n.tvad_fact; if(g>0.5){ const a=M3(n.tvad_decl), b=M3(n.tvad_fact), c=M3(g); add({id:'R_TVA_DED', task:'tva', gravite:sevGap(g,n.tvad_decl),
+    short:T3('طرح غير مبرَّر','Déduction non justifiée','Unsupported deduction'),
+    titre:T3('أداء مطروح يفوق ما تبرّره فواتير الشراء','TVA déduite supérieure à la TVA justifiée','Input VAT deducted exceeds what invoices support'),
+    explication:T3(`الأداء القابل للطرح المصرّح به (${a.ar}) يتجاوز الأداء المبرَّر بفواتير مستوفية (${b.ar}) بفارق ${c.ar}. الطرح غير المبرَّر يُرفض عادة عند المراقبة.`,
+      `La TVA déductible déclarée (${a.fr}) dépasse la TVA justifiée par des factures conformes (${b.fr}) de ${c.fr}. Une déduction non justifiée est généralement rejetée en contrôle.`,
+      `Input VAT declared (${a.en}) exceeds input VAT supported by compliant invoices (${b.en}) by ${c.en}. Unsupported deductions are usually disallowed on audit.`),
+    impact:T3(`استرجاع ${c.ar} مع الخطايا المترتّبة.`,`Reprise de ${c.fr} assortie de pénalités.`,`Recovery of ${c.en} plus penalties.`),
+    action:T3('جرد فواتير الشراء المعتمدة في الطرح والتحقق من شروطها الشكلية وطبيعة الأعباء (المستثناة من حق الطرح).',"Inventorier les factures d'achat déduites, vérifier leurs mentions obligatoires et la nature des charges (exclusions du droit à déduction).",'List the purchase invoices deducted, check their mandatory particulars and the nature of the expenses (exclusions from the right to deduct).'),
+    calc:`${fmtL(n.tvad_decl,'fr')} − ${fmtL(n.tvad_fact,'fr')} = ${fmtL(g,'fr')}`}); } }
+  if(n.ca_decl!=null && n.ca_compta!=null){ const g=n.ca_compta-n.ca_decl; if(Math.abs(g)>0.5){ const a=M3(n.ca_compta), b=M3(n.ca_decl), c=M3(g), p=(g/n.ca_compta*100).toFixed(1);
+    add({id:'R_CA', task:'coherence', gravite:sevGap(g,n.ca_compta),
+    short:T3('فارق رقم المعاملات','Écart de CA','Turnover gap'),
+    titre: g>0 ? T3('رقم المعاملات المحاسبي يفوق المصرّح به','CA comptabilisé supérieur au CA déclaré','Booked turnover exceeds declared turnover') : T3('رقم المعاملات المصرّح به يفوق المحاسبي','CA déclaré supérieur au CA comptabilisé','Declared turnover exceeds booked turnover'),
+    explication:T3(`رقم المعاملات حسب المحاسبة ${a.ar} مقابل ${b.ar} مصرّح به، بفارق ${c.ar} (${p}%).`,`CA comptabilisé ${a.fr} contre ${b.fr} déclaré, soit un écart de ${c.fr} (${p} %).`,`Booked turnover ${a.en} versus ${b.en} declared: a gap of ${c.en} (${p}%).`),
+    impact: g>0 ? T3('سهم مباشر للمراقبة الجبائية على الأداء وعلى الضريبة على الدخل/الشركات.',"Cible directe d'un contrôle : TVA et impôt sur le revenu / les sociétés.",'A direct audit target for VAT and income/corporate tax.') : T3('خطر أداء مدفوع زائد أو خطأ في الحسابات.',"Risque de TVA payée en trop ou d'erreur comptable.",'Risk of overpaid VAT or an accounting error.'),
+    action:T3('إعداد جدول مطابقة بين رقم المعاملات المحاسبي والمصرّح به شهراً بشهر مع تبرير كل فارق.','Établir un tableau de rapprochement mensuel CA comptable / CA déclaré en justifiant chaque écart.','Prepare a monthly reconciliation of booked vs declared turnover, explaining every gap.'),
+    calc:`${fmtL(n.ca_compta,'fr')} − ${fmtL(n.ca_decl,'fr')} = ${fmtL(g,'fr')}`}); } }
+  if(n.credit>0 && n.tvad_decl!=null && n.tvac_decl!=null && n.tvad_decl>n.tvac_decl){ const a=M3(n.tvad_decl), b=M3(n.tvac_decl), c=M3(n.credit);
+    add({id:'R_CREDIT', task:'tva', gravite:'moyen', certitude:'probable',
+    short:T3('قرض أداء هيكلي','Crédit TVA structurel','Recurring VAT credit'), titre:T3('فائض أداء متكرّر','Crédit de TVA structurel','Structural VAT credit'),
+    explication:T3(`الطرح (${a.ar}) يفوق المُحصّل (${b.ar}) مع قرض مُرحَّل ${c.ar}؛ القرض المتكرّر يلفت انتباه الإدارة.`,`La TVA déductible (${a.fr}) dépasse la TVA collectée (${b.fr}) avec un crédit reporté de ${c.fr} ; un crédit récurrent attire l'attention de l'administration.`,`Input VAT (${a.en}) exceeds output VAT (${b.en}) with ${c.en} carried forward; a recurring credit draws the tax office's attention.`),
+    impact:T3('مراقبة معمّقة عند طلب الاسترجاع.','Contrôle approfondi en cas de demande de remboursement.','In-depth audit if a refund is requested.'),
+    action:T3('تبرير مصدر القرض (استثمارات، تصدير، نسب منخفضة) وتوثيقه.',"Justifier et documenter l'origine du crédit (investissements, export, taux réduits).",'Explain and document where the credit comes from (investment, exports, reduced rates).'),
+    calc:`crédit ${fmtL(n.credit,'fr')}`}); }
+  if(n.rs_dues!=null && n.rs_decl!=null){ const g=n.rs_dues-n.rs_decl; if(g>0.5){ const a=M3(n.rs_dues), b=M3(n.rs_decl), c=M3(g); add({id:'R_RS', task:'rs', gravite:sevGap(g,n.rs_dues),
+    short:T3('خصم غير مُصرّح','Retenue non déclarée','Undeclared withholding'),
+    titre:T3('خصم من المورد واجب لم يقع التصريح به أو دفعه','Retenues à la source dues non déclarées / non versées','Withholding tax due but not declared / paid'),
+    explication:T3(`الخصم الواجب حسب الدفوعات ${a.ar} مقابل ${b.ar} مصرّح به، بفارق ${c.ar}. المؤسسة مسؤولة عن الخصم غير المنجز.`,`Retenues dues selon les paiements : ${a.fr} ; déclarées : ${b.fr} ; écart : ${c.fr}. L'entreprise reste redevable des retenues non opérées.`,`Withholding due on payments: ${a.en}; declared: ${b.en}; gap: ${c.en}. The company remains liable for tax it failed to withhold.`),
+    impact:T3(`مطالبة بمبلغ ${c.ar} مع خطايا، وقد يُرفض طرح الأعباء المعنية.`,`Rappel de ${c.fr} avec pénalités, et possible non-déductibilité des charges concernées.`,`Claim of ${c.en} plus penalties, and the related expenses may be disallowed.`),
+    action:T3('حصر الدفوعات الخاضعة (أكرية، أتعاب، عمولات، صفقات…) وتسوية الخصم والتصريح به.','Recenser les paiements soumis (loyers, honoraires, commissions, marchés…), régulariser et déclarer les retenues.','List payments subject to withholding (rent, fees, commissions, contracts…), then regularise and declare.'),
+    calc:`${fmtL(n.rs_dues,'fr')} − ${fmtL(n.rs_decl,'fr')} = ${fmtL(g,'fr')}`}); } }
+  if(n.rs_benef!=null && n.rs_cert!=null && n.rs_cert<n.rs_benef){ const k=n.rs_benef-n.rs_cert, b=n.rs_benef; add({id:'R_RS_CERT', task:'rs', gravite:'moyen',
+    short:T3('شهادات خصم ناقصة','Attestations manquantes','Missing certificates'),
+    titre:T3('شهادات خصم غير مسلّمة لكل المستفيدين','Attestations de retenue non délivrées à tous les bénéficiaires','Withholding certificates not issued to all payees'),
+    explication:T3(`${k} مستفيد(ون) من أصل ${b} دون شهادة خصم.`,`${k} bénéficiaire(s) sur ${b} sans attestation de retenue.`,`${k} of ${b} payee(s) have no withholding certificate.`),
+    impact:T3('إخلال بواجب شكلي قد تترتّب عنه خطية.','Manquement formel pouvant entraîner une amende.','A formal breach that may trigger a fine.'),
+    action:T3('إصدار الشهادات الناقصة وأرشفة نسخها.','Établir les attestations manquantes et en archiver une copie.','Issue the missing certificates and keep copies.'),
+    calc:`${b} − ${n.rs_cert} = ${k}`}); }
+  if(I.elfatoora_oblige==='oui' && n.fact_emises!=null && n.fact_elec!=null && n.fact_elec<n.fact_emises){ const g=n.fact_emises-n.fact_elec, p=(g/n.fact_emises*100).toFixed(1);
+    add({id:'R_ELF', task:'elf', gravite: g/n.fact_emises>.1?'eleve':'moyen',
+    short:T3('فواتير خارج ElFatoora','Factures hors ElFatoora','Invoices outside ElFatoora'),
+    titre:T3('فواتير صادرة خارج منصة الفوترة الإلكترونية رغم الإلزام',"Factures émises hors plateforme ElFatoora malgré l'obligation",'Invoices issued outside ElFatoora despite the obligation'),
+    explication:T3(`${g} فاتورة من ${n.fact_emises} (${p}%) لم تمرّ عبر المنصة.`,`${g} facture(s) sur ${n.fact_emises} (${p} %) ne sont pas passées par la plateforme.`,`${g} of ${n.fact_emises} invoices (${p}%) did not go through the platform.`),
+    impact:T3('خطر خطايا عن كل فاتورة غير مطابقة وإشكال في حق الطرح لدى الحرفاء.','Risque de pénalités par facture non conforme et de remise en cause de la déduction chez les clients.','Risk of penalties per non-compliant invoice and of customers losing their deduction.'),
+    action:T3('تحديد طبيعة هذه الفواتير (حرفاء خاضعون/خواص) والتحقق من نطاق الإلزام وتسويتها.',"Identifier la nature de ces factures (clients assujettis / particuliers), vérifier le champ de l'obligation et régulariser.",'Identify these invoices (registered businesses vs individuals), check the scope of the obligation and regularise.'),
+    calc:`${n.fact_emises} − ${n.fact_elec} = ${g}`}); }
+  if(I.elfatoora_oblige==='nsp') add({id:'R_ELF_NSP', task:'elf', gravite:'faible', certitude:'a_verifier',
+    short:T3('نطاق الإلزام غير محدّد','Obligation à préciser','Scope unclear'),
+    titre:T3('وضعية الإلزام بالفوترة الإلكترونية غير محدّدة','Assujettissement à ElFatoora à déterminer','E-invoicing obligation not determined'),
+    explication:T3('لم يُحدَّد إن كانت المؤسسة ملزمة بالفوترة الإلكترونية.',"Il n'a pas été précisé si l'entreprise est soumise à la facturation électronique.",'It has not been established whether the company must e-invoice.'),
+    impact:T3('غموض قد يُخفي خطر عدم المطابقة.','Zone grise pouvant masquer une non-conformité.','A grey area that may hide non-compliance.'),
+    action:T3('التحقق من وضعية المؤسسة حسب النصوص السارية ونوع حرفائها.',"Vérifier la situation de l'entreprise au regard des textes en vigueur et de sa clientèle.","Check the company's position under current rules and its customer base."), calc:'—'});
+  if(n.decl_dues!=null && n.decl_dep!=null && n.decl_dep<n.decl_dues){ const g=n.decl_dues-n.decl_dep; add({id:'R_DEPOT', task:'delais', gravite:'eleve',
+    short:T3('تصاريح غير مودعة','Déclarations non déposées','Returns not filed'),
+    titre:T3('تصاريح مستوجبة لم تُودَع','Déclarations dues non déposées','Required returns not filed'),
+    explication:T3(`${g} تصريح(ات) من أصل ${n.decl_dues} لم تُودع.`,`${g} déclaration(s) sur ${n.decl_dues} non déposée(s).`,`${g} of ${n.decl_dues} returns were not filed.`),
+    impact:T3('خطر توظيف إجباري وخطايا عدم الإيداع.',"Risque de taxation d'office et de pénalités pour défaut de dépôt.",'Risk of an ex-officio assessment and non-filing penalties.'),
+    action:T3('إيداع التصاريح المتخلّدة فوراً، حتى السلبية منها، لتقليص الخطايا.','Déposer immédiatement les déclarations manquantes, même néant, pour limiter les pénalités.','File the missing returns right away, even nil returns, to limit penalties.'),
+    calc:`${n.decl_dues} − ${n.decl_dep} = ${g}`}); }
+  if(n.decl_retard>0){ const k=n.decl_retard; add({id:'R_RETARD', task:'delais', gravite: k>=3?'moyen':'faible',
+    short:T3('إيداع متأخّر','Dépôt tardif','Late filing'), titre:T3('تصاريح أُودعت خارج الآجال','Déclarations déposées hors délai','Returns filed late'),
+    explication:T3(`${k} تصريح(ات) أُودعت بعد الأجل القانوني.`,`${k} déclaration(s) déposée(s) après le délai légal.`,`${k} return(s) filed after the legal deadline.`),
+    impact:T3('خطايا تأخير محتسبة على المبالغ المستوجبة.','Pénalités de retard calculées sur les montants dus.','Late penalties calculated on the amounts due.'),
+    action:T3('احتساب الخطايا المستوجبة ووضع رزنامة آجال وتنبيهات.','Calculer les pénalités dues et mettre en place un calendrier fiscal avec alertes.','Compute the penalties due and set up a tax calendar with reminders.'),
+    calc:`retards : ${k}`}); }
+  if(n.timbre_nb!=null && n.timbre_tarif!=null && n.timbre_decl!=null){ const du=n.timbre_nb*n.timbre_tarif, g=du-n.timbre_decl; if(g>0.5){ const a=M3(du), b=M3(n.timbre_decl), c=M3(g), tf=F3(n.timbre_tarif);
+    add({id:'R_TIMBRE', task:'timbre', gravite:sevGap(g,du),
+    short:T3('نقص معلوم الطابع','Timbre insuffisant','Stamp duty shortfall'), titre:T3('معلوم الطابع المصرّح به أقلّ من المستوجب','Droit de timbre insuffisamment déclaré','Stamp duty under-declared'),
+    explication:T3(`المستوجب ${n.timbre_nb} × ${tf.ar} = ${a.ar} مقابل ${b.ar} مصرّح به.`,`Dû : ${n.timbre_nb} × ${tf.fr} = ${a.fr} contre ${b.fr} déclaré.`,`Due: ${n.timbre_nb} × ${tf.en} = ${a.en} versus ${b.en} declared.`),
+    impact:T3(`نقص ${c.ar} مع الخطايا.`,`Insuffisance de ${c.fr} plus pénalités.`,`Shortfall of ${c.en} plus penalties.`),
+    action:T3('التثبت من التعريفة السارية خلال الفترة وتسوية الفارق.','Vérifier le tarif en vigueur sur la période et régulariser.','Check the rate in force for the period and settle the difference.'),
+    calc:`${fmtL(du,'fr')} − ${fmtL(n.timbre_decl,'fr')} = ${fmtL(g,'fr')}`}); } }
+  else if(n.timbre_nb!=null && n.timbre_decl!=null && n.timbre_tarif==null){ const b=M3(n.timbre_decl); add({id:'R_TIMBRE_NSP', task:'timbre', gravite:'faible', certitude:'a_verifier',
+    short:T3('الطابع: تعريفة ناقصة','Timbre : tarif manquant','Stamp: rate missing'),
+    titre:T3('تعذّر احتساب معلوم الطابع المستوجب (التعريفة غير مُدخلة)','Droit de timbre : tarif non renseigné','Stamp duty: rate not entered'),
+    explication:T3(`${n.timbre_nb} فاتورة مقابل ${b.ar} مصرّح به؛ أدخل التعريفة السارية للمقارنة.`,`${n.timbre_nb} facture(s) pour ${b.fr} déclaré ; saisissez le tarif en vigueur pour comparer.`,`${n.timbre_nb} invoice(s) for ${b.en} declared; enter the current rate to compare.`),
+    impact:T3('—','—','—'), action:T3('إدخال التعريفة الرسمية السارية خلال الفترة.','Saisir le tarif officiel en vigueur sur la période.','Enter the official rate in force for the period.'), calc:'—'}); }
+  if(n.especes>0){ const a=M3(n.especes); add({id:'R_ESPECES', task:'timbre', gravite:'moyen', certitude:'probable',
+    short:T3('دفوعات نقدية','Paiements en espèces','Cash payments'), titre:T3('دفوعات نقدية تتجاوز السقف','Paiements en espèces au-delà du plafond','Cash payments above the ceiling'),
+    explication:T3(`دفوعات نقدية بقيمة ${a.ar} تتجاوز السقف المحدّد قانوناً حسب المعطيات المدخلة.`,`${a.fr} de paiements en espèces dépassent le plafond légal selon les données saisies.`,`${a.en} of cash payments exceed the legal ceiling, per the figures entered.`),
+    impact:T3('خطر رفض طرح الأعباء أو الأداء المتعلّق بها وخطايا محتملة.','Risque de rejet de la déduction des charges ou de la TVA correspondantes, et de pénalités.','Risk that the related expenses or VAT are disallowed, plus possible penalties.'),
+    action:T3('التثبت من السقف الساري وسند كل دفعة وتعديل طرق الخلاص.','Vérifier le plafond en vigueur et les justificatifs, et adapter les modes de règlement.','Check the current ceiling and supporting documents, and change payment methods.'),
+    calc:fmtL(n.especes,'fr')}); }
+  return R;
+}
+
+/* =====================================================================
+   Context builders for Claude
+   ===================================================================== */
+function intakeSummary(I){
+  const n=I.n; const Lb=[];
+  Lb.push(`Client: ${I.anon ? (I.aiClient||'[CLIENT-1]') : I.client} | Forme: ${t('f_forme.'+I.forme,'fr')} | Activité: ${(I.anon ? I.aiActivite : I.activite)||'—'} | Régime: ${t('f_regime.'+I.regime,'fr')} | Période: ${I.periode||'—'} | TVA: ${t('f_assuj.'+I.assujetti,'fr')} | ElFatoora obligatoire: ${t('f_elfob.'+I.elfatoora_oblige,'fr')}`);
+  const lab = {ca_decl:'n_ca_decl',ca_compta:'n_ca_compta',taux:'n_taux',tvac_decl:'n_tvac_decl',tvac_fact:'n_tvac_fact',tvad_decl:'n_tvad_decl',tvad_fact:'n_tvad_fact',credit:'n_credit',rs_dues:'n_rs_dues',rs_decl:'n_rs_decl',rs_benef:'n_rs_benef',rs_cert:'n_rs_cert',fact_emises:'n_fact_emises',fact_elec:'n_fact_elec',decl_dues:'n_decl_dues',decl_dep:'n_decl_dep',decl_retard:'n_decl_retard',timbre_nb:'n_timbre_nb',timbre_tarif:'n_timbre_tarif',timbre_decl:'n_timbre_decl',especes:'n_especes'};
+  for(const k in lab) if(n[k]!=null) Lb.push(`- ${t(lab[k],'fr')}: ${n[k]}`);
+  const notes = I.anon ? I.aiNotes : I.notes; if(notes) Lb.push(`Consignes du conseiller : ${notes}`);
+  if(I.anon) Lb.push(ANON_NOTE);
+  return Lb.join('\n');
+}
+function docText(d, max){
+  let s=''; for(const p of d.pages){ const chunk = `\n[${d.aiName||d.name} | p.${p.n}${p.ocr?' | ocr':''}]\n${p.text||''}\n`; if(s.length+chunk.length>max){ s+=chunk.slice(0, Math.max(0,max-s.length)); if(!S.truncated.includes(d.name)) S.truncated.push(d.name); break; } s+=chunk; }
+  return s;
+}
+const KW = {
+  tva:[/T\.?V\.?A/i,/القيمة المضافة/,/collect/i,/d[ée]duct/i,/قابل للطرح/,/مستوجب/,/taux/i,/نسبة/,/export/i,/تصدير/,/exon/i,/معفى/,/v[ée]hicule/i,/سيارة/],
+  rs:[/retenue/i,/الخصم من المورد/,/خصم/,/honorair/i,/أتعاب/,/loyer/i,/كراء/,/attestation/i,/شهادة/,/commission/i,/عمولة/,/march[ée]/i],
+  elf:[/factur/i,/فاتورة/,/فواتير/,/TTN/,/El ?Fatoora/i,/[ée]lectroniq/i,/إلكتروني/,/matricule/i,/المعرف الجبائي/],
+  delais:[/\b\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4}\b/,/d[ée]p[oô]t/i,/إيداع/,/d[ée]clar/i,/تصريح/,/[ée]ch[ée]ance/i,/أجل/,/retard/i,/تأخير/,/non d[ée]pos/i],
+  timbre:[/timbre/i,/طابع/,/esp[èe]ces/i,/نقد/,/p[ée]nalit/i,/خطية/,/amende/i,/caisse/i]
+};
+function excerpts(task, max=12000){
+  const res=[]; let len=0;
+  for(const d of S.docs){ for(const p of d.pages){ const lines=(p.text||'').split('\n');
+    lines.forEach((ln,i)=>{ if(len>max) return; if(KW[task].some(r=>r.test(ln))){ const ctx=lines.slice(Math.max(0,i-1),i+2).join(' / ').slice(0,500); const s=`[${d.aiName||d.name} | p.${p.n}] ${ctx}`; if(!res.includes(s)){ res.push(s); len+=s.length; } } }); } }
+  return res.join('\n') || '(لا مقتطفات مطابقة في الوثائق)';
+}
+const LANGNAME = {ar:'العربية الفصحى', fr:'الفرنسية', en:'الإنجليزية'};
+const langRule = () => `لغة الإخراج: ${LANGNAME[S.runLang]}. اكتب الحقول short وexplication وimpact وaction وbase_legale وresume وpoints_a_verifier وdocuments_manquants بهذه اللغة، واكتب عنوان كل خطر باللغات الثلاث في titre_ar وtitre_fr وtitre_en.
+اكتب كل الأرقام بالأرقام اللاتينية 0123456789 (مثل 12 و612 000) ولا تستعمل الأرقام المشرقية (١٢).`;
+const OUT_RISKS = () => `أعد كائن JSON فقط بهذه البنية:
+{"resume":"خلاصة من 2 إلى 4 جمل",
+ "risques":[{"rule_ref":"معرّف القاعدة إن كان الخطر يؤكّد أو يوضّح قاعدة آلية (مثل R_TVA_DED) وإلا null",
+   "short":"وسم قصير ≤ 4 كلمات","titre_ar":"عنوان دقيق بالعربية","titre_fr":"titre précis en français","titre_en":"precise title in English",
+   "gravite":"eleve|moyen|faible","certitude":"confirme|probable|a_verifier",
+   "preuves":[{"document":"اسم الملف","page":"رقم الصفحة","extrait":"اقتباس حرفي قصير ≤ 25 كلمة من الوثيقة"}],
+   "explication":"شرح مفصّل وواضح للخطر وكيف استُنتج، مع الأرقام",
+   "impact":"الأثر المالي أو الجبائي المحتمل (رقمي إن أمكن حسابه من المعطيات فقط)",
+   "action":"الإجراء التصحيحي العملي المقترح","base_legale":"السند القانوني بصيغة عامة + (يُراجَع / à vérifier / to verify) إن لم تكن متأكداً تماماً"}],
+ "points_a_verifier":["سؤال أو نقطة يجب على المستشار التثبت منها"],
+ "documents_manquants":["وثيقة تنقص لإتمام الفحص"]}
+${langRule()}`;
+const RULESET = `قواعد صارمة:
+1) لا تخترع أي رقم أو تاريخ أو اسم: كل رقم يجب أن يأتي من المعطيات الأولية أو من الوثائق، أو من عملية حسابية تذكر مكوّناتها.
+2) كل خطر مبني على وثيقة يجب أن يتضمّن دليلاً (اسم الملف + الصفحة + اقتباس حرفي). إن لم يوجد دليل فاجعل certitude = a_verifier.
+3) السند القانوني: اذكر النص بصيغة عامة (مثال: مجلة الأداء على القيمة المضافة — أحكام الطرح). لا تذكر رقم فصل إلا إن كنت متأكداً، وأضف علامة المراجعة عند أي شك. لا تذكر نسب خطايا أو تعريفات أو أسقفاً قانونية بالأرقام إلا إن وردت في الوثائق أو المعطيات.
+4) لا تكرّر خطراً موجوداً في القواعد الآلية: إن كان خطرك يخصّها فضع rule_ref وأضف التفاصيل والأدلة من الوثائق فقط.
+5) اكتب بلغة الإخراج المحدّدة بأسلوب مهني دقيق ومفصّل، ولا تبالغ في الخطورة.
+6) إن لم تجد خطراً حقيقياً فأعد قائمة فارغة: الصدق أهمّ من العدد.
+7) 6 مخاطر كحدّ أقصى في هذا المجال، وكل شرح في 90 كلمة على الأكثر، حتى يكتمل الردّ.`;
+const CHECKLISTS = {
+  tva:`مجال الفحص: الأداء على القيمة المضافة (TVA).
+افحص على الأقل: تطابق الأداء المُحصَّل المصرّح به مع المفوتر شهراً بشهر؛ صحة النسب المطبّقة حسب طبيعة العمليات؛ العمليات المعفاة أو بنظام توقيف؛ الأداء القابل للطرح: وجود فاتورة مستوفية الشروط الشكلية (هوية ومعرّف المزوّد، التفصيل)، والأعباء المستثناة من حق الطرح (مثل سيارات السياحة ونفقات غير مرتبطة بالاستغلال)؛ قرض الأداء ومصدره؛ الأشهر ذات الفوارق.`,
+  rs:`مجال الفحص: الخصم من المورد (Retenue à la source).
+افحص على الأقل: الدفوعات الخاضعة غير المقتطعة (أكرية، أتعاب، عمولات، صفقات، مكافآت…)؛ تطابق المبالغ المقتطعة مع المصرّح بها والمدفوعة؛ آجال الدفع؛ تسليم شهادات الخصم؛ تبعات عدم الخصم على طرح الأعباء.`,
+  elf:`مجال الفحص: الفوترة والفوترة الإلكترونية (ElFatoora / TTN).
+افحص على الأقل: نسبة الفواتير المارّة عبر المنصة مقارنة بالمُصدَرة؛ البيانات الإلزامية للفواتير (المعرّف الجبائي للطرفين، الترقيم المتسلسل، التاريخ، التفصيل)؛ فواتير الشراء غير المطابقة وأثرها على حق الطرح؛ ثغرات الترقيم.`,
+  delais:`مجال الفحص: الآجال والالتزامات التصريحية.
+استخرج من الوثائق تواريخ الإيداع لكل فترة وقارنها بالفترة المعنية؛ حدّد التصاريح غير المودعة أو المتأخرة بدقة (أي شهر، كم يوماً تقريباً)؛ الأجل القانوني للإيداع يُذكر بصيغة عامة مع علامة المراجعة إن لم يكن مذكوراً في الوثائق؛ لا تحتسب خطايا بنسب لم ترد في المعطيات.`,
+  timbre:`مجال الفحص: معلوم الطابع ومخاطر أخرى.
+افحص: معلوم الطابع على الفواتير مقارنة بعددها؛ الدفوعات النقدية التي تتجاوز السقف وأثرها؛ أي خطر جبائي آخر واضح في الوثائق لم تشمله المجالات السابقة (ضريبة على الشركات/الدخل، تسبقات، أعباء غير قابلة للطرح، علاقات مع أطراف مرتبطة…).`
+};
+
+/* =====================================================================
+   Merge AI findings with rule findings
+   ===================================================================== */
+const str = v => v==null ? '' : typeof v==='string' ? v : typeof v==='number' ? String(v) : (typeof v==='object' ? (v[S.runLang]||v.text||Object.values(v).filter(x=>typeof x==='string').join(' ')) : String(v));
+const strArr = v => Array.isArray(v) ? v.map(str).filter(Boolean) : (typeof v==='string' && v ? [v] : []);
+function normAI(o){
+  o = (o && typeof o==='object') ? o : {};
+  const rq = Array.isArray(o.risques) ? o.risques : (o.risques && typeof o.risques==='object' ? Object.values(o.risques) : []);
+  o.risques = rq.filter(a=>a && typeof a==='object').slice(0,8).map(a=>({...a, short:str(a.short), titre_ar:str(a.titre_ar), titre_fr:str(a.titre_fr), titre_en:str(a.titre_en),
+    explication:str(a.explication), impact:str(a.impact), action:str(a.action), base_legale:str(a.base_legale), rule_ref: typeof a.rule_ref==='string'?a.rule_ref:null,
+    preuves:(Array.isArray(a.preuves)?a.preuves:[]).filter(p=>p&&typeof p==='object').map(p=>({document:str(p.document), page:str(p.page), extrait:str(p.extrait)}))}));
+  o.points_a_verifier = strArr(o.points_a_verifier); o.documents_manquants = strArr(o.documents_manquants); o.resume = str(o.resume);
+  return o;
+}
+function mergeRisks(task, aiRisks){
+  const RL=S.runLang, added=[];
+  for(const a of (aiRisks||[])){
+    const titre = {ar:a.titre_ar, fr:a.titre_fr, en:a.titre_en};
+    if(!titre.ar && !titre.fr && !titre.en) continue;
+    const r = {source:'ai', task, id:'AI_'+task+'_'+Math.random().toString(36).slice(2,7), short:{[RL]:a.short}, titre,
+      gravite:normSev(a.gravite), certitude:normCert(a.certitude), preuves:Array.isArray(a.preuves)?a.preuves.filter(p=>p&&(p.document||p.extrait)):[],
+      explication:{[RL]:a.explication}, impact:{[RL]:a.impact}, action:{[RL]:a.action}, base_legale:a.base_legale?{[RL]:a.base_legale}:null};
+    const ref = a.rule_ref && S.risks.find(x=>x.id===a.rule_ref);
+    if(ref){
+      ref.source='rule+ai'; ref.preuves=[...ref.preuves, ...r.preuves];
+      if(a.explication) ref.docnote = {[RL]: a.explication};
+      if(a.action) ref.actnote = {[RL]: a.action};
+      if(a.base_legale) ref.base_legale = {[RL]: a.base_legale};
+      if(SEV[r.gravite].w > SEV[ref.gravite].w) ref.gravite = r.gravite;
+      added.push(ref);
+    } else { S.risks.push(r); added.push(r); alog(`! ${task.padEnd(8)} ${tx(r.titre,'fr')||''}`); }
+  }
+  updateRisksPanel(); return added;
+}
+
+/* =====================================================================
+   2) COHÉRENCE — document fiches + cross-check
+   ===================================================================== */
+async function doCoherence(){
+  const I=S.intake;
+  S.rules = computeRules(I);
+  for(const r of S.rules){ S.risks.push(r); alog(`! rule ${r.id}`); }
+  updateRisksPanel();
+  log(`[rules] ${S.rules.length} écarts calculés sur les données saisies`);
+  setRows('coherence', [['règles', `${S.rules.length} écarts`], ['pièces', `0 / ${S.docs.length}`]]);
+  const readable = S.docs.filter(d=>d.pages.some(p=>(p.text||'').trim().length>20));
+  if(!S.sample || !readable.length){ addChips('coherence', S.risks.filter(r=>r.task==='coherence')); return; }
+  const list = readable.slice(0,12); let i=0;
+  for(const d of list){
+    if(S.aborted) return;
+    alog(`fiche ${d.name}`); log(`[fiche] analyse ${d.name}`);
+    const prompt = `TASK_ID: fiche
+أنت محاسب مدقّق تونسي. اقرأ الوثيقة التالية (نوعها حسب المستعمل: ${tx(DOC_TYPES[d.type],'fr')}) واستخرج بطاقة بيانات دقيقة.
+لا تخترع شيئاً: كل رقم يُنسخ كما ورد مع رقم الصفحة. إن لم تجد معلومة ضع null.
+${S.intake.anon?ANON_NOTE:''} اكتب الأرقام بالأرقام اللاتينية 0123456789 فقط.
+أعد JSON فقط:
+{"type_document":"","periode":"","tiers":"","montants_cles":[{"libelle":"","montant":0,"page":""}],
+ "totaux":{"ht":null,"tva":null,"ttc":null,"retenue":null,"timbre":null},"nb_factures":null,
+ "dates_depot":[{"periode":"","date":"","page":""}],"taux_tva_observes":[],"anomalies_visibles":["ملاحظة دقيقة مع الصفحة"]}
+الوثيقة:
+${docText(d, 24000)}`;
+    try { const f = await askJSON(prompt, {tier:'default', label:'fiche'}); f._doc=d.aiName||d.name; S.fiches.push(f); log(`[fiche] ${d.name}: ${(f.montants_cles||[]).length} montants, ${(f.anomalies_visibles||[]).length} anomalies`); }
+    catch(e){ S.aiErrors++; log(`[fiche] ${d.name}: ${e.message||e.code}`, 'e'); }
+    i++; setTaskProgress('coherence', i/(list.length+1)); setRows('coherence', [['règles', `${S.rules.length} écarts`], ['pièces', `${i} / ${list.length}`], ['montants', String(S.fiches.reduce((a,f)=>a+(f.montants_cles||[]).length,0))]]);
+    meter('preuves', Math.min(1, S.fiches.length/Math.max(1,list.length)));
+  }
+  if(S.aborted) return;
+  const prompt = `TASK_ID: coherence
+أنت وكيل تدقيق جبائي تونسي يعمل تحت إشراف مستشارة جبائية. مهمّتك: مطابقة المعطيات الأولية التي أدخلتها المستشارة مع ما ورد فعلاً في الوثائق.
+قارن كل رقم أولي بما يقابله في بطاقات الوثائق، واكشف: الأرقام المتناقضة، الفترات الناقصة، الوثائق التي تكشف عمليات لم تُذكر، وأي عدم تناسق بين الوثائق نفسها.
+${RULESET}
+
+== المعطيات الأولية ==
+${intakeSummary(I)}
+
+== نتائج القواعد الآلية (لا تكرّرها، أكّدها أو وضّحها عبر rule_ref) ==
+${S.rules.map(r=>`${r.id}: ${tx(r.titre,'fr')} — ${r.calc}`).join('\n')||'لا شيء'}
+
+== بطاقات الوثائق ==
+${JSON.stringify(S.fiches).slice(0,16000)}
+
+${OUT_RISKS()}`;
+  try { const o = normAI(await askJSON(prompt, {tier:'default', label:'coherence'})); const add = mergeRisks('coherence', o.risques); S.extra.push({task:'coherence', ...o});
+    addChips('coherence', add.concat(S.risks.filter(r=>r.task==='coherence'&&r.source==='rule')));
+    setRows('coherence', [['règles', `${S.rules.length} écarts`], ['pièces', `${S.fiches.length} fiches`], ['incohérences', String(S.risks.filter(r=>r.task==='coherence').length)]]); }
+  catch(e){ S.aiErrors++; log(`[coherence] ${e.message||e.code}`, 'e'); }
+}
+
+/* =====================================================================
+   3–7) Thematic checks
+   ===================================================================== */
+async function doCheck(task){
+  const I=S.intake; const ruleHits = S.risks.filter(r=>r.task===task && r.source.startsWith('rule'));
+  setRows(task, [['règles', String(ruleHits.length)], ['pièces', String(S.docs.length)], ['statut', S.sample?'analyse IA…':'règles seules']]);
+  addChips(task, ruleHits);
+  if(!S.sample){ await sleep(700); setRows(task, [['règles', String(ruleHits.length)], ['risques', String(ruleHits.length)], ['mode', 'règles seules']]); return; }
+  const ex = excerpts(task);
+  log(`[${task}] ${ex.split('\n').length} extraits pertinents`);
+  const prompt = `TASK_ID: ${task}
+أنت وكيل تدقيق جبائي تونسي متخصّص، تعمل تحت إشراف مستشارة جبائية خبيرة. أنجز الفحص التالي بدقّة وتفصيل.
+${CHECKLISTS[task]}
+${RULESET}
+
+== المعطيات الأولية ==
+${intakeSummary(I)}
+
+== نتائج القواعد الآلية في هذا المجال ==
+${ruleHits.map(r=>`${r.id}: ${tx(r.titre,'fr')} — ${r.calc}`).join('\n')||'لا شيء'}
+
+== بطاقات الوثائق ==
+${JSON.stringify(S.fiches).slice(0,8000)||'لا توجد'}
+
+== مقتطفات من الوثائق ذات صلة بالمجال ==
+${ex}
+
+${OUT_RISKS()}`;
+  try {
+    const o = normAI(await askJSON(prompt, {tier:'default', label:task}));
+    const add = mergeRisks(task, o.risques); S.extra.push({task, ...o});
+    const all = S.risks.filter(r=>r.task===task);
+    addChips(task, all);
+    setRows(task, [['règles', String(ruleHits.length)], ['risques', String(all.length)], ['preuves', String(all.reduce((a,r)=>a+(r.preuves||[]).length,0))], ['à vérifier', String((o.points_a_verifier||[]).length)]]);
+    log(`[${task}] ${add.length} constat(s) IA, ${all.length} risque(s) au total`);
+  } catch(e){ S.aiErrors++; log(`[${task}] ${e.message||e.code}`, 'e'); throw e; }
+}
+
+/* =====================================================================
+   8) RAPPORT
+   ===================================================================== */
+function score(){ let s=0; for(const r of S.risks) s += SEV[r.gravite].w * CERT[r.certitude].k; return Math.round(100*Math.exp(-s/80)); }
+async function doReport(){
+  const sc = score(); const order=['eleve','moyen','faible']; const RL=S.runLang;
+  S.risks.sort((a,b)=> order.indexOf(a.gravite)-order.indexOf(b.gravite) || CERT[b.certitude].k-CERT[a.certitude].k);
+  setRows('rapport', [['risques', String(S.risks.length)], ['score', sc+' / 100'], ['statut', 'rédaction']]);
+  const pav = {[RL]: [...new Set(S.extra.flatMap(x=>x.points_a_verifier||[]))]};
+  const dm = {[RL]: [...new Set(S.extra.flatMap(x=>x.documents_manquants||[]))]};
+  let syn = null;
+  if(S.sample && S.risks.length && !S.aborted){
+    const prompt = `TASK_ID: rapport
+أنت تحرّر الخلاصة التنفيذية لتقرير فحص جبائي أوّلي ستراجعه مستشارة جبائية قبل تسليمه للحريف.
+اعتمد فقط على قائمة المخاطر التالية ولا تضف مخاطر جديدة ولا أرقاماً جديدة.
+== الحريف ==
+${intakeSummary(S.intake)}
+== المخاطر المرتّبة ==
+${S.risks.map((r,i)=>`${i+1}. [${r.gravite}/${r.certitude}] ${tx(r.titre,'fr')} — ${tx(r.impact,RL)||''}`).join('\n')}
+مؤشّر السلامة المحسوب: ${sc}/100
+أعد JSON فقط:
+{"synthese_ar":"خلاصة تنفيذية مفصّلة (6–10 جمل) بالعربية الفصحى","synthese_fr":"synthèse exécutive détaillée (6–10 phrases)","synthese_en":"detailed executive summary (6–10 sentences)",
+ "plan_action":[{"priorite":1,"action":"إجراء محدّد بلغة الإخراج","delai":"immediat|semaine|mois","risques_lies":[1,2]}],
+ "message_client":"فقرة قصيرة مبسّطة يمكن أن تُرسل للحريف، بلغة الإخراج"}
+لغة الإخراج للحقلين action وmessage_client: ${LANGNAME[RL]}. الخلاصات الثلاث كل واحدة بلغتها.
+اكتب كل الأرقام بالأرقام اللاتينية 0123456789 (مثل 12) ولا تستعمل الأرقام المشرقية.`;
+    try { const o = await askJSON(prompt, {tier:'complex', label:'rapport'});
+      syn = { synthese_ar:str(o.synthese_ar), synthese_fr:str(o.synthese_fr), synthese_en:str(o.synthese_en),
+        plan_action:(Array.isArray(o.plan_action)?o.plan_action:[]).filter(p=>p&&typeof p==='object').map((p,i)=>({priorite:str(p.priorite)||String(i+1), action:{[RL]:str(p.action)}, delai:str(p.delai), risques_lies:(Array.isArray(p.risques_lies)?p.risques_lies:[]).map(str)})),
+        message_client: o.message_client ? {[RL]:str(o.message_client)} : null };
+      if(!syn.synthese_ar && !syn.synthese_fr && !syn.synthese_en) syn = null; }
+    catch(e){ S.aiErrors++; log(`[rapport] ${e.message||e.code}`, 'e'); }
+  }
+  if(!syn){
+    const h=S.risks.filter(r=>r.gravite==='eleve').length, m=S.risks.filter(r=>r.gravite==='moyen').length, n=S.risks.length;
+    const top = l => S.risks.slice(0,3).map(r=>tx(r.titre,l)).join(l==='ar'?'؛ ':' ; ') || '—';
+    syn = { synthese_ar:`كشف الفحص الأوّلي ${n} خطراً، منها ${h} مرتفعة الخطورة و${m} متوسطة. أبرزها: ${top('ar')}. مؤشّر السلامة التقديري ${sc}/100.`,
+      synthese_fr:`Le pré-audit relève ${n} risque(s), dont ${h} élevé(s) et ${m} moyen(s). Principaux : ${top('fr')}. Indice indicatif : ${sc}/100.`,
+      synthese_en:`The pre-audit flags ${n} risk(s): ${h} high and ${m} medium. Main ones: ${top('en')}. Indicative index: ${sc}/100.`,
+      plan_action: S.risks.slice(0,8).map((r,i)=>({priorite:i+1, action:r.action, delai:r.gravite==='eleve'?'immediat':r.gravite==='moyen'?'semaine':'mois', risques_lies:[i+1]})), message_client:null };
+  }
+  S.report = {score:sc, syn, pav, dm, date:new Date().toISOString(), intake:S.intake};
+  meter('rapport', 1); meter('analyse', 1);
+  setRows('rapport', [['risques', String(S.risks.length)], ['score', sc+' / 100'], ['statut', 'prêt']]);
+  addChips('rapport', S.risks.slice(0,6));
+}
+
+/* =====================================================================
+   Report rendering (in the selected language; titles in all three)
+   ===================================================================== */
+const SIGN = `<div class="sig"><div dir="rtl" style="text-align:right"><b>الأستاذة سماح قسومة</b> — مستشارة جبائية · مدرّبة دولية</div><div class="l"><b>Sameh Gassouma</b> — Conseillère fiscale · Formatrice internationale<br><b>Sameh Gassouma</b> — Tax Advisor · International Trainer<br>samehgassouma@tadreebpro.ai · tadreebpro.ai</div></div>`;
+const delaiTxt = d => I18N['d.'+d] ? t('d.'+d) : tx(d);
+function reportInner(){
+  const R=S.report, I=R.intake; const sc=R.score; const col = sc>=75?'#3a9a5a':sc>=50?'#e2a21b':'#d9432b';
+  const cnt = k=>S.risks.filter(r=>r.gravite===k).length;
+  const otherTitles = r => LANGS.filter(l=>l!==L).map(l=>r.titre[l]).filter(Boolean).join(' · ');
+  const risksHtml = S.risks.map((r,i)=>`<details class="rk ${SEV[r.gravite].c}" ${i<3?'open':''}><summary><span class="mono" style="font-weight:700">#${i+1}</span>
+    <span class="t">${esc(tx(r.titre))}<small>${esc(otherTitles(r))}</small></span><span class="tag ${SEV[r.gravite].c}">${t('sev.'+r.gravite)}</span><span class="tag">${t('cert.'+r.certitude)}</span>
+    <span class="tag">${t('src.'+r.source)}</span></summary>
+    <div class="body"><dl>
+    <dt>${t('dExpl')}</dt><dd>${esc(tx(r.explication)||'—').replace(/\n/g,'<br>')}${r.docnote?'<br><br><b>'+esc(t('docAnalysis'))+'</b>'+esc(tx(r.docnote)).replace(/\n/g,'<br>'):''}</dd>
+    <dt>${t('dImpact')}</dt><dd>${esc(tx(r.impact)||'—')}</dd>
+    <dt>${t('dAction')}</dt><dd>${esc(tx(r.action)||'—').replace(/\n/g,'<br>')}${r.actnote?'<br>'+esc(tx(r.actnote)).replace(/\n/g,'<br>'):''}</dd>
+    <dt>${t('dLegal')}</dt><dd>${esc(tx(r.base_legale)||t('dLegalNone'))}</dd>
+    <dt>${t('dEvid')}</dt><dd>${(r.preuves||[]).map(p=>`<div class="ev">📄 ${esc(tx(p.document))} · ${t('pAbbr')} ${esc(p.page||'—')}<br><code>${esc(p.extrait||'')}</code></div>`).join('')||'—'}</dd>
+    </dl></div></details>`).join('') || `<p>${t('noRisks')}</p>`;
+  const plan = (R.syn.plan_action||[]).map(p=>`<tr><td class="mono">${esc(p.priorite)}</td><td>${esc(tx(p.action))}</td><td>${esc(delaiTxt(p.delai||''))}</td><td class="mono">${esc((p.risques_lies||[]).map(x=>'#'+x).join(' '))}</td></tr>`).join('');
+  const docsList = S.docs.map(d=>`<li><span class="mono">${esc(d.name)}</span> — ${esc(tx(DOC_TYPES[d.type]))} — ${d.pages.length} ${t('wPages')}${d.pages.some(p=>p.ocr)?' '+t('partOcr'):''}${d.notes?.length?' — <i>'+esc(d.notes.join(' ; '))+'</i>':''}</li>`).join('');
+  const dt = new Date(R.date); const pavL = R.pav[L]||R.pav[S.runLang]||[], dmL = R.dm[L]||R.dm[S.runLang]||[];
+  return `
+  <div><div class="mono" style="color:#b4248f;font-weight:700">TadreebPro.ai · agent fiscal</div>
+   <h2>${t('rTitle')}</h2><div class="tri3">${esc(others('rTitle'))}</div>
+   <div class="meta">${t('rClient')}: <b>${esc(I.client)}</b> · ${esc(t('f_forme.'+I.forme))} · ${esc(I.activite||'')}<br>${t('rPeriod')}: ${esc(I.periode||'—')} · ${t('rDate')}: ${dt.toLocaleDateString('fr-FR')} ${dt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}<br>
+   ${t('rDocs')}: ${S.docs.length} ${t('wFiles')} · ${S.pagesRead} ${t('wPages')}${S.ocrPages?` · ${S.ocrPages} ${t('wOcr')}`:''}</div></div>
+  <div class="score"><div class="gauge" style="background:conic-gradient(${col} ${sc*3.6}deg,#d6d1c6 0)"><span>${sc}</span></div>
+   <div><b>${t('rScore')}</b><div class="tri3" style="font-size:13px">${esc(others('rScore'))}</div>
+   <div class="stats" style="margin-top:8px"><div class="stat"><b style="color:#d9432b">${cnt('eleve')}</b>${t('sev.eleve')}</div><div class="stat"><b style="color:#b07d0b">${cnt('moyen')}</b>${t('sev.moyen')}</div><div class="stat"><b style="color:#5c86c9">${cnt('faible')}</b>${t('sev.faible')}</div></div></div></div>
+  <h3>${t('rExec')}</h3>
+  <p dir="rtl" style="line-height:1.95;text-align:right"><b>العربية — </b>${esc(R.syn.synthese_ar)}</p>
+  <p class="fr" style="line-height:1.7"><b>Français — </b>${esc(R.syn.synthese_fr)}</p>
+  <p class="en" style="line-height:1.7"><b>English — </b>${esc(R.syn.synthese_en)}</p>
+  <h3>${t('rRisks')} (${S.risks.length})</h3>${risksHtml}
+  ${plan?`<h3>${t('rPlan')}</h3><table class="plan"><tr><th>#</th><th>${t('thAction')}</th><th>${t('thDelay')}</th><th>${t('thRisks')}</th></tr>${plan}</table>`:''}
+  ${pavL.length?`<h3>${t('rPav')}</h3><ul>${pavL.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}
+  ${dmL.length?`<h3>${t('rDm')}</h3><ul>${dmL.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}
+  ${R.syn.message_client?`<h3>${t('rMsg')}</h3><p style="background:#fff;border:1px solid #d6d1c6;padding:12px;line-height:1.9">${esc(tx(R.syn.message_client))}</p>`:''}
+  <h3>${t('rMeth')}</h3>
+  <ul><li>${t('methDocs')}<ul>${docsList||`<li>${t('noDocs')}</li>`}</ul></li>
+  <li>${t('methRules')}</li>
+  <li>${S.sample?t('methAI'):t('methNoAI')}</li>
+  ${S.truncated.length?`<li>${t('methTrunc')}${esc(S.truncated.join(', '))}.</li>`:''}
+  ${S.ocrSkipped?`<li>${S.ocrSkipped}${t('methOcrSkip')}</li>`:''}
+  ${S.aiErrors?`<li>${S.aiErrors}${t('methErr')}${S.failed&&S.failed.length?' ('+esc(S.failed.join(' ; '))+')':''}</li>`:''}
+  <li>${S.intake.anon ? t('methAnon').replace('{n}', Object.values(S.anonStats||{}).reduce((a,b)=>a+b,0)) : t('methAnonOff')}</li>
+  ${S.ocrPages?`<li>${t('methOcrRaw').replace('{n}', S.ocrPages)}</li>`:''}
+  <li>${t('methScore')}</li></ul>
+  <div class="disc"><div dir="rtl" style="text-align:right">هذا التقرير فحص أوّلي آلي لمساعدة المستشار الجبائي، وليس رأياً قانونياً ولا جبائياً نهائياً. كل خطر وكل سند قانوني يجب أن يُتحقَّق منه في النصوص الرسمية السارية قبل أي إجراء.</div>
+  <div class="fr" style="margin-top:6px">Pré-audit automatisé d'aide au conseiller : ne constitue pas un avis fiscal ou juridique. Chaque constat et chaque référence légale doivent être vérifiés dans les textes officiels en vigueur.</div>
+  <div class="en" style="margin-top:6px">Automated preliminary review to assist the tax advisor: not tax or legal advice. Every finding and legal reference must be checked against the official texts in force.</div></div>
+  ${SIGN}`;
+}
+function renderReport(scroll=true){
+  $('#reportView').dir = L==='ar'?'rtl':'ltr';
+  $('#reportBox').innerHTML = `<div class="rbtns"><button class="o" id="dlHtml">${t('dlHtml')}</button><button id="dlJson">${t('dlJson')}</button><button id="cpTxt">${t('cpTxt')}</button><button id="newRun">${t('newRun')}</button>${S.anonRev?`<button id="realBtn">${S.showReal?t('hideReal'):t('showReal')}</button>`:''}</div><div id="dlMsg" class="hint" style="color:#555"></div>` + reid(reportInner());
+  const rb=$('#realBtn'); if(rb) rb.onclick=()=>{ S.showReal=!S.showReal; renderReport(false); };
+  $('#reportView').classList.remove('hidden'); $('#st3').classList.add('on');
+  $('#dlHtml').onclick = () => save(`rapport_preaudit_${slug()}_${L}.html`, standaloneHTML(), 'text/html');
+  $('#dlJson').onclick = () => save(`preaudit_${slug()}.json`, JSON.stringify({langue:S.runLang, intake:S.intake, score:S.report.score, synthese:S.report.syn, risques:S.risks, points_a_verifier:S.report.pav[S.runLang], documents_manquants:S.report.dm[S.runLang], documents:S.docs.map(d=>({name:d.name,type:d.type,pages:d.pages.length,notes:d.notes}))}, null, 2), 'application/json');
+  $('#cpTxt').onclick = async () => { const R=S.report; const txt=`${R.syn.synthese_ar}\n\n${R.syn.synthese_fr}\n\n${R.syn.synthese_en}\n\n${S.risks.map((r,i)=>`${i+1}. [${t('sev.'+r.gravite)}] ${tx(r.titre)}`).join('\n')}`;
+    try{ await navigator.clipboard.writeText(txt); $('#dlMsg').textContent=t('copied'); }catch(e){ $('#dlMsg').textContent=t('copyFail'); } };
+  $('#newRun').onclick = () => location.reload();
+  if(scroll) $('#reportView').scrollIntoView({behavior:'smooth'});
+}
+const slug = () => (S.intake.client||'client').replace(/[^\w؀-ۿ-]+/g,'_').slice(0,30);
+function standaloneHTML(){
+  const css = [...document.styleSheets].flatMap(s=>{ try{ return [...s.cssRules].map(r=>r.cssText); }catch(e){ return []; } }).filter(x=>/^(\.rp|\.rk|\.tag|\.ev|table\.plan|\.sig|\.disc|\.mono|:root)/.test(x)).join('\n');
+  return `<!DOCTYPE html><html lang="${L}" dir="${L==='ar'?'rtl':'ltr'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(t('rTitle'))} — ${esc(S.intake.client)}</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#efece5;color:#1b1b1b;font-family:'IBM Plex Sans Arabic',sans-serif;padding:24px 0}${css}</style></head><body><div class="rp">${reid(reportInner())}</div></body></html>`;
+}
+async function save(filename, data, mime){
+  const dl = window.claude && typeof window.claude.use==='function' ? await Promise.race([window.claude.use('downloads'), sleep(8000).then(()=>null)]).catch(()=>null) : null;
+  if(dl){ try{ await dl.save({filename, data}); $('#dlMsg').textContent='✓ '+filename; return; }catch(e){ $('#dlMsg').textContent=t('saveFail')+(e.message||e.code||''); return; } }
+  try{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([data],{type:mime})); a.download=filename; a.click(); $('#dlMsg').textContent='✓ '+filename; }
+  catch(e){ $('#dlMsg').textContent=t('dlNA'); }
+}
+
+/* =====================================================================
+   Orchestrator
+   ===================================================================== */
+async function runTask(id, fn){
+  if(S.aborted && id!=='rapport'){ setTask(id,'error'); return; }
+  setTask(id,'running'); log(`[${id}] start`); meter('analyse', nDone()/9);
+  try { await fn(); setTask(id,'done'); log(`[${id}] done`); if(!S.completed.includes(id)) S.completed.push(id); saveCheckpoint(); }
+  catch(e){ setTask(id,'error'); const m=(e&&(e.code||e.message))||'?'; log(`[${id}] erreur: ${m}`, 'e'); S.failed.push(`${id}: ${m}`);
+    const v=$('#tk_'+id+' .viz'); if(v) v.innerHTML=`<div class="vscan" style="color:var(--hi)">erreur · ${esc(m)}</div>`; }
+  meter('analyse', nDone()/9);
+}
+async function run(){
+  const I = readIntake();
+  const hasNum = Object.values(I.n).some(v=>v!=null);
+  if(!S.files.length && !hasNum){ $('#intakeErr').textContent=t('errNone'); return; }
+  if(!$('#f_consent').checked){ $('#intakeErr').textContent=t('errConsent'); return; }
+  $('#intakeErr').textContent='';
+  Object.assign(S, {intake:I, docs:[], fiches:[], rules:[], risks:[], extra:[], aborted:false, pagesTotal:0, pagesRead:0, ocrPages:0, ocrSkipped:0, truncated:[], aiErrors:0, failed:[], completed:[], report:null, runLang:L, t0:performance.now()});
+  audioInit();
+  $('#runBtn').disabled = true;
+  try { if(navigator.wakeLock) S.wake = await within(navigator.wakeLock.request('screen'), 1500, null); } catch(e){ S.wake=null; }
+  let ping = null;
+  if(S.pre){ S.sample = S.pre; ping = S.pre('Réponds uniquement par : OK', {modelTier:'quick', cache:false}).then(()=>true, e=>e); }
+  S.sess = `session 0x${Math.floor(Math.random()*65535).toString(16).toUpperCase().padStart(4,'0')}`;
+  buildDash(); applyLang();
+  $('#intakeView').classList.add('hidden'); $('#dashView').classList.remove('hidden'); $('#st2').classList.add('on'); window.scrollTo(0,0);
+  fitStage(); layoutWires();
+  await playIntro();
+  S.t0 = performance.now(); stageGlitch(); droneOn();
+  typeMission(t('mission').replace('{c}', I.client));
+  log('[agent] initialisation');
+  if(!S.sample) S.sample = await getSample();
+  if(S.sample && ping){ const pr = await within(ping, 45000, true); if(pr!==true){ const c=pr&&(pr.code||pr.message); log(`[agent] IA: ${c}`, 'e'); if(c==='not_granted') S.sample=null; } }
+  if(S.sample){ try{ const lim = typeof S.sample.limits==='function' ? await within(S.sample.limits(), 5000, null) : null; S.imagesOK = !!(lim && lim.images); }catch(e){ S.imagesOK=false; }
+    $('#modelLbl').textContent='claude · tadreeb-agent'; log(`[agent] IA connectée · vision ${S.imagesOK?'oui':'non'} · langue ${S.runLang}`); }
+  else { $('#noAiNotice').classList.remove('hidden'); $('#modelLbl').textContent='rules-only'; log('[agent] IA indisponible → moteur de règles seul', 'e'); setTimeout(layoutWires, 50); }
+  await pipeline();
+}
+async function pipeline(){
+  const done = t => S.completed.includes(t);
+  if(!done('lecture')) await runTask('lecture', doLecture);
+  if(!done('anon')) await runTask('anon', doAnon);
+  if(!done('coherence')) await runTask('coherence', doCoherence);
+  const checks = ['tva','rs','elf','delais','timbre'].filter(k=>!done(k));
+  const queue = [...checks]; const worker = async () => { while(queue.length){ const k=queue.shift(); await runTask(k, () => doCheck(k)); } };
+  await worker();
+  try { await runTask('rapport', doReport); } catch(e){}
+  droneOff(); try{ S.wake && S.wake.release(); }catch(e){}
+  if(!S.report){ try { await doReport(); } catch(e){ log('[rapport] '+(e.message||e), 'e'); } }
+  if(S.report){
+    toast(`OK  ${S.risks.length} risque(s) · ${S.risks.length} خطر · ${S.risks.length} risk(s)`); sndDone(); await sleep(1400);
+    try { await showOutro(); } catch(e){ $('#outro').classList.add('hidden'); }
+    try { renderReport(); } catch(e){ log('[rapport] affichage: '+(e.message||e), 'e'); $('#reportView').classList.remove('hidden'); $('#reportBox').innerHTML = `<pre style="white-space:pre-wrap">${esc(S.report.syn.synthese_ar)}\n\n${esc(S.report.syn.synthese_fr)}\n\n${esc(S.report.syn.synthese_en)}\n\n${S.risks.map((r,i)=>esc(`${i+1}. ${tx(r.titre)}`)).join('\n')}</pre>`; }
+  } else log('[agent] arrêt sans rapport', 'e');
+}
+/* ---------- checkpoint (resume after interruption) ---------- */
+const CK='tadreeb_agent_ck_v1';
+function saveCheckpoint(){
+  try {
+    const docs = S.docs.map(d=>({name:d.name, aiName:d.aiName, type:d.type, kind:d.kind, notes:d.notes, pages:d.pages.map(p=>({n:p.n, ocr:p.ocr, text:(p.text||'').slice(0,20000)}))}));
+    const data = {v:1, at:Date.now(), runLang:S.runLang, intake:S.intake, docs, fiches:S.fiches, rules:S.rules, risks:S.risks, extra:S.extra, completed:S.completed,
+      pagesRead:S.pagesRead, pagesTotal:S.pagesTotal, ocrPages:S.ocrPages, ocrSkipped:S.ocrSkipped, truncated:S.truncated, aiErrors:S.aiErrors, failed:S.failed, report:S.report, anonRev:S.anonRev, anonStats:S.anonStats};
+    localStorage.setItem(CK, JSON.stringify(data));
+  } catch(e){}
+}
+function loadCheckpoint(){ try { const d=JSON.parse(localStorage.getItem(CK)||'null'); return d && d.v===1 ? d : null; } catch(e){ return null; } }
+function clearCheckpoint(){ try { localStorage.removeItem(CK); } catch(e){} }
+function showResumeBox(){
+  const box=$('#resumeBox'); const ck=loadCheckpoint(); if(!box) return; if(!ck){ box.innerHTML=''; return; }
+  const fin = !!ck.report;
+  box.innerHTML = `<div class="notice" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between"><span>${esc(fin?t('doneT'):t('resumeT').replace('{n}', ck.completed.length))} — <b>${esc(ck.intake?.client||'')}</b></span>
+    <span style="display:flex;gap:8px"><button class="btn" id="ckGo" style="padding:7px 16px;font-size:14px">${esc(fin?t('showBtn'):t('resumeBtn'))}</button><button class="btn ghost" id="ckDel" style="padding:7px 16px;font-size:14px">${esc(t('discardBtn'))}</button></span></div>`;
+  $('#ckDel').onclick = () => { clearCheckpoint(); showResumeBox(); };
+  $('#ckGo').onclick = () => { clearInterval(S.autoIv); fin ? showSaved(ck) : resume(ck); };
+  $('#ckDel').addEventListener('click', () => clearInterval(S.autoIv));
+  if(!fin && Date.now()-ck.at < 3*3600*1000 && !S.autoShown){ S.autoShown = true; let n = 6;
+    S.autoIv = setInterval(() => { n--; const bb=$('#ckGo'); if(!bb || !loadCheckpoint()){ clearInterval(S.autoIv); return; } bb.textContent = `${t('resumeBtn')} (${n})`; if(n<=0){ clearInterval(S.autoIv); resume(loadCheckpoint()); } }, 1000);
+    box.scrollIntoView({block:'center'}); }
+}
+function restore(ck){ Object.assign(S, {intake:ck.intake, runLang:ck.runLang, docs:ck.docs, fiches:ck.fiches||[], rules:ck.rules||[], risks:ck.risks||[], extra:ck.extra||[], completed:ck.completed||[],
+  pagesRead:ck.pagesRead||0, pagesTotal:ck.pagesTotal||0, ocrPages:ck.ocrPages||0, ocrSkipped:ck.ocrSkipped||0, truncated:ck.truncated||[], aiErrors:ck.aiErrors||0, failed:ck.failed||[], report:ck.report||null, anonRev:ck.anonRev||null, anonStats:ck.anonStats||null, aborted:false}); }
+function showSaved(ck){ restore(ck); $('#intakeView').classList.add('hidden'); renderReport(); }
+async function resume(ck){
+  restore(ck); audioInit();
+  try { if(navigator.wakeLock) S.wake = await within(navigator.wakeLock.request('screen'), 1500, null); } catch(e){ S.wake=null; }
+  S.sess = `session 0x${Math.floor(Math.random()*65535).toString(16).toUpperCase().padStart(4,'0')} · resume`;
+  buildDash(); applyLang();
+  $('#intakeView').classList.add('hidden'); $('#dashView').classList.remove('hidden'); $('#st2').classList.add('on'); window.scrollTo(0,0);
+  fitStage(); layoutWires(); S.t0 = performance.now(); droneOn();
+  S.completed.forEach(id => setTask(id, 'done')); updatePages(); updateRisksPanel();
+  TASKS.forEach(tk => { if(S.completed.includes(tk.id)) addChips(tk.id, S.risks.filter(r=>r.task===tk.id)); });
+  typeMission(t('mission').replace('{c}', S.intake.client));
+  S.sample = S.pre || await getSample();
+  if(!S.sample){ $('#noAiNotice').classList.remove('hidden'); $('#modelLbl').textContent='rules-only'; }
+  log(`[agent] reprise : ${S.completed.length}/9 étapes déjà faites`);
+  await pipeline();
+}
+let lastLogAt = performance.now();
+setInterval(() => { const el=$('#liveLine'); if(!el || $('#dashView').classList.contains('hidden')) return; if(S.report){ el.textContent=''; return; }
+  const run = TASKS.find(tk=>S.tstate[tk.id]?.st==='running'); if(!run){ el.textContent=''; return; }
+  const n = nDone()+1, name = t('tk.'+run.id);
+  el.textContent = S.callStart ? t('liveWait').replace('{n}',n).replace('{t}',name).replace('{s}',Math.round((performance.now()-S.callStart)/1000)) : t('liveRun').replace('{n}',n).replace('{t}',name); }, 1000);
+setInterval(() => { if($('#dashView').classList.contains('hidden') || S.report) return; const running = TASKS.filter(tk=>S.tstate[tk.id]?.st==='running').map(tk=>tk.id);
+  if(running.length && performance.now()-lastLogAt > 30000){ log(`[agent] en attente de Claude… (${running.join(', ')})`); } }, 30000);
+window.addEventListener('error', e => { try { log('[js] '+(e.message||e.error), 'e'); } catch(_){} });
+window.addEventListener('unhandledrejection', e => { try { log('[js] '+((e.reason&&(e.reason.message||e.reason.code))||e.reason), 'e'); } catch(_){} });
+$('#skipBtn').onclick = () => { S.skipReq = true; log('[agent] étape ignorée à la demande', 'e'); };
+$('#stopBtn').onclick = () => { S.aborted = true; S.ctls.forEach(c=>{ try{c.abort();}catch(e){} }); log('[agent] arrêt demandé', 'e'); };
+
+/* ---------- boot ---------- */
+buildForm(); bindForm(); bindTranslateMemory();
+getSample().then(s => { S.pre = s; });
+document.querySelectorAll('.langs button').forEach(b => b.onclick = () => setLang(b.dataset.lang));
+applyLang();
+showResumeBox();
+</script>
+</body>
+</html>
